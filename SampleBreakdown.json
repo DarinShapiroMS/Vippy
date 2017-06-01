@@ -1,0 +1,269 @@
+{
+  "accountId": "ab237c89-59f8-4c8e-ba3c-40a93cda441f",
+  "id": "52a530d4cc",
+  "partition": null,
+  "name": "708213662",
+  "description": null,
+  "userName": "Darin Shapiro",
+  "createTime": "2017-05-25T22:29:53.9042006+00:00",
+  "organization": "microsoft.com",
+  "privacyMode": "Private",
+  "state": "Processed",
+  "isOwned": true,
+  "isBase": true,
+  "durationInSeconds": 19,
+  "summarizedInsights": {
+    "name": "708213662",
+    "shortId": "52a530d4cc",
+    "privacyMode": 0,
+    "duration": {
+      "time": "00:00:19",
+      "seconds": 19.0
+    },
+    "thumbnailUrl": "https://www.videoindexer.ai/api/Thumbnail/52a530d4cc/40007507-355f-4c26-b480-57b382c095a7",
+    "faces": [
+      {
+        "id": 1164,
+        "shortId": "52a530d4cc",
+        "name": "Unknown #1",
+        "description": null,
+        "title": null,
+        "thumbnailUrl": "/api/Thumbnail/52a530d4cc/06245cf8-87ba-43f6-b237-372cff1806b8",
+        "thumbnailFullUrl": "https://www.videoindexer.ai/api/Thumbnail/52a530d4cc/06245cf8-87ba-43f6-b237-372cff1806b8",
+        "appearances": [
+          {
+            "startTime": "00:00:00.0830000",
+            "endTime": "00:00:18.9770000",
+            "startSeconds": 0.1,
+            "endSeconds": 19.0
+          }
+        ],
+        "seenDuration": 18.9,
+        "seenDurationRatio": 0.994736842105263
+      },
+      {
+        "id": 1026,
+        "shortId": "52a530d4cc",
+        "name": "John Franklin",
+        "description": null,
+        "title": null,
+        "thumbnailUrl": "/api/Thumbnail/52a530d4cc/0e20613b-76a2-4630-8f08-e29af57155f2",
+        "thumbnailFullUrl": "https://www.videoindexer.ai/api/Thumbnail/52a530d4cc/0e20613b-76a2-4630-8f08-e29af57155f2",
+        "appearances": [
+          {
+            "startTime": "00:00:00.0830000",
+            "endTime": "00:00:11.0110000",
+            "startSeconds": 0.1,
+            "endSeconds": 11.0
+          }
+        ],
+        "seenDuration": 10.9,
+        "seenDurationRatio": 0.5736842105263158
+      }
+    ],
+    "topics": [],
+    "sentiments": [
+      {
+        "sentimentKey": "Neutral",
+        "appearances": [
+          {
+            "startTime": "00:00:00",
+            "endTime": "00:00:19",
+            "startSeconds": 0.0,
+            "endSeconds": 19.0
+          }
+        ],
+        "seenDurationRatio": 1.0
+      }
+    ],
+    "audioEffects": []
+  },
+  "breakdowns": [
+    {
+      "accountId": "ab237c89-59f8-4c8e-ba3c-40a93cda441f",
+      "id": "52a530d4cc",
+      "state": "Processed",
+      "processingProgress": "10%",
+      "externalId": null,
+      "externalUrl": null,
+      "metadata": null,
+      "insights": {
+        "transcriptBlocks": [
+          {
+            "id": 0,
+            "lines": [
+              {
+                "id": 0,
+                "timeRange": {
+                  "start": "00:00:00",
+                  "end": "00:00:19"
+                },
+                "adjustedTimeRange": {
+                  "start": "00:00:00",
+                  "end": "00:00:19"
+                },
+                "participantId": -1,
+                "text": "",
+                "isIncluded": true,
+                "confidence": 1.0
+              }
+            ],
+            "sentimentIds": [],
+            "thumbnailsIds": [],
+            "sentiment": 0.0,
+            "faces": [
+              {
+                "id": 1164,
+                "thumbnailId": "68c98fe8-5531-441f-9f5b-072b066793c0",
+                "ranges": [
+                  {
+                    "timeRange": {
+                      "start": "00:00:00.0830000",
+                      "end": "00:00:18.9770000"
+                    },
+                    "adjustedTimeRange": {
+                      "start": "00:00:00.0830000",
+                      "end": "00:00:18.9770000"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": 1026,
+                "thumbnailId": "fe4f7714-d24f-4136-a3e1-b17d6d25b125",
+                "ranges": [
+                  {
+                    "timeRange": {
+                      "start": "00:00:00.0830000",
+                      "end": "00:00:11.0110000"
+                    },
+                    "adjustedTimeRange": {
+                      "start": "00:00:00.0830000",
+                      "end": "00:00:11.0110000"
+                    }
+                  }
+                ]
+              }
+            ],
+            "ocrs": [],
+            "audioEffectInstances": [],
+            "scenes": [
+              {
+                "id": 0,
+                "timeRange": {
+                  "start": "00:00:00",
+                  "end": "00:00:19"
+                },
+                "keyFrame": "00:00:09.8010000",
+                "shots": [
+                  {
+                    "id": 0,
+                    "timeRange": {
+                      "start": "00:00:00",
+                      "end": "00:00:19"
+                    },
+                    "keyFrame": "00:00:09.8010000"
+                  }
+                ]
+              }
+            ],
+            "annotations": [
+              {
+                "name": "person",
+                "timeRanges": [
+                  {
+                    "start": "00:00:00.0830000",
+                    "end": "00:00:19"
+                  }
+                ]
+              },
+              {
+                "name": "people",
+                "timeRanges": [
+                  {
+                    "start": "00:00:00.0830000",
+                    "end": "00:00:10.7610000"
+                  },
+                  {
+                    "start": "00:00:13.4300000",
+                    "end": "00:00:19"
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "timeRanges": [
+                  {
+                    "start": "00:00:01.4180000",
+                    "end": "00:00:02.7530000"
+                  },
+                  {
+                    "start": "00:00:04.0870000",
+                    "end": "00:00:05.4220000"
+                  },
+                  {
+                    "start": "00:00:06.7560000",
+                    "end": "00:00:08.0910000"
+                  }
+                ]
+              },
+              {
+                "name": "indoor",
+                "timeRanges": [
+                  {
+                    "start": "00:00:06.7560000",
+                    "end": "00:00:08.0910000"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "topics": [],
+        "faces": [
+          {
+            "id": 1164,
+            "bingId": null,
+            "name": "Unknown #1",
+            "thumbnailId": "06245cf8-87ba-43f6-b237-372cff1806b8",
+            "description": null,
+            "title": null,
+            "imageUrl": null,
+            "confidence": 0.0,
+            "knownPersonId": "00000000-0000-0000-0000-000000000000"
+          },
+          {
+            "id": 1026,
+            "bingId": null,
+            "name": "John Franklin",
+            "thumbnailId": "0e20613b-76a2-4630-8f08-e29af57155f2",
+            "description": null,
+            "title": null,
+            "imageUrl": null,
+            "confidence": 0.0,
+            "knownPersonId": "00000000-0000-0000-0000-000000000000"
+          }
+        ],
+        "participants": [],
+        "contentModeration": {
+          "adultClassifierValue": 0.10163,
+          "bannedWordsCount": 0,
+          "bannedWordsRatio": 0.0,
+          "isSuspectedAsAdult": false,
+          "isAdult": false
+        },
+        "audioEffectsCategories": []
+      },
+      "thumbnailUrl": "https://www.videoindexer.ai/api/Thumbnail/52a530d4cc/40007507-355f-4c26-b480-57b382c095a7",
+      "publishedUrl": "https://BreakdownMedia.azureedge.net:443/cb91d396-d2ac-417a-b6a3-ae81227b6100/708213662.ism/manifest",
+      "viewToken": "Bearer=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cm46bWljcm9zb2Z0OmF6dXJlOm1lZGlhc2VydmljZXM6Y29udGVudGtleWlkZW50aWZpZXIiOiJkNDllM2Q0Yy1jNGI0LTQ2YjktOWZjMi1mZmI4YmVkZTExNDgiLCJpc3MiOiJodHRwczovL2JyZWFrZG93bi5tZSIsImF1ZCI6IkJyZWFrZG93blVzZXIiLCJleHAiOjE0OTYxNzA4OTMsIm5iZiI6MTQ5NjA4NDQzM30.2l0mwE1pCFLE1H-RBhQ8qpFFw1ZtlxnXvbSxa1HlS5Q",
+      "sourceLanguage": "English",
+      "language": "English"
+    }
+  ],
+  "social": {
+    "likedByUser": false,
+    "likes": 0,
+    "views": 2
+  }
+}

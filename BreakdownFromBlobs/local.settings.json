@@ -1,0 +1,10 @@
+{
+    "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=videostorageds;AccountKey=FU6eFhT+/obesHM8TnkouXYzceAT+WyoNJL+4BOEgOtxl3Gr9Z9GDzNdkFj48Gg55Jj1BTRS9SwPc5UbLChSTA==;EndpointSuffix=core.windows.net",
+    "AzureWebJobsDashboard": "",
+    "video_indexer_key": "cb2980a155f0465c9cc5fed037f4596f",
+    "cosmos_enpoint": "https://videobreakdowncosmos.documents.azure.com:443/",
+    "cosmos_key": "of9lc9EIW4ibYaz2lszbtPzsucPUjEeh5zSTNXn27PSTIG4tsxPJAo2Ljy6RmpxkfFdsgu4y1ke46kigHkfy7Q=="
+  }
+}
