@@ -154,9 +154,9 @@
                     "[concat(resourceId('Microsoft.Web/sites/', parameters('FunctionApp_name')),'/config/appsettings')]"
                   ],
                   "properties": {
-                    "RepoUrl": "[parameters('repoUrl')]",
+                    "repoUrl": "[parameters('repoUrl')]",
                     "branch": "[parameters('branch')]",
-                    "IsManualIntegration": "false"
+                    "IsManualIntegration": true
                   }
                 }
             ]
@@ -238,30 +238,30 @@
                 "tracingOptions": null,
                 "vnetName": "",
                 "siteAuthEnabled": false,
-                "siteAuthSettings": {
-                    "enabled": null,
-                    "unauthenticatedClientAction": null,
-                    "tokenStoreEnabled": null,
-                    "allowedExternalRedirectUrls": null,
-                    "defaultProvider": null,
-                    "clientId": null,
-                    "clientSecret": null,
-                    "issuer": null,
-                    "allowedAudiences": null,
-                    "additionalLoginParams": null,
-                    "isAadAutoProvisioned": false,
-                    "googleClientId": null,
-                    "googleClientSecret": null,
-                    "googleOAuthScopes": null,
-                    "facebookAppId": null,
-                    "facebookAppSecret": null,
-                    "facebookOAuthScopes": null,
-                    "twitterConsumerKey": null,
-                    "twitterConsumerSecret": null,
-                    "microsoftAccountClientId": null,
-                    "microsoftAccountClientSecret": null,
-                    "microsoftAccountOAuthScopes": null
-                },
+              "siteAuthSettings": {
+                "enabled": null,
+                "unauthenticatedClientAction": null,
+                "tokenStoreEnabled": null,
+                "allowedExternalRedirectUrls": null,
+                "defaultProvider": null,
+                "clientId": null,
+                "clientSecret": null,
+                "issuer": null,
+                "allowedAudiences": null,
+                "additionalLoginParams": null,
+                "isAadAutoProvisioned": false,
+                "googleClientId": null,
+                "googleClientSecret": null,
+                "googleOAuthScopes": null,
+                "facebookAppId": null,
+                "facebookAppSecret": null,
+                "facebookOAuthScopes": null,
+                "twitterConsumerKey": null,
+                "twitterConsumerSecret": null,
+                "microsoftAccountClientId": null,
+                "microsoftAccountClientSecret": null,
+                "microsoftAccountOAuthScopes": null
+              },
                 "cors": {
                     "allowedOrigins": [
                         "https://functions.azure.com",
