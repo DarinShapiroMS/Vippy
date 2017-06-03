@@ -29,21 +29,7 @@
         "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
     },
     "resources": [
-         {
-          "type": "sourcecontrols",
-          "name": "web",
-          "apiVersion": "2015-08-01",
-          "comments": "This section sets up source control for continuous integration on the Function app and pulls the source code down from Github.",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/sites/', parameters('FunctionApp_name'))]",
-            "[concat(resourceId('Microsoft.Web/sites/', parameters('FunctionApp_name')),'/config/appsettings')]"
-          ],
-          "properties": {
-            "RepoUrl": "[parameters('repoUrl')]",
-            "branch": "[parameters('branch')]",
-            "IsManualIntegration": "false"
-          }
-        },
+         
         {
             "type": "Microsoft.DocumentDB/databaseAccounts",
             "kind": "GlobalDocumentDB",
@@ -157,6 +143,21 @@
                         "cosmos_enpoint": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('Cosmos_Account_name'))).documentEndpoint]",
                         "cosmos_key": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('Cosmos_Account_name')), '2015-04-08').primaryMasterKey]"
                     }
+                },
+                {
+                  "type": "sourcecontrols",
+                  "name": "web",
+                  "apiVersion": "2015-08-01",
+                  "comments": "This section sets up source control for continuous integration on the Function app and pulls the source code down from Github.",
+                  "dependsOn": [
+                    "[resourceId('Microsoft.Web/sites/', parameters('FunctionApp_name'))]",
+                    "[concat(resourceId('Microsoft.Web/sites/', parameters('FunctionApp_name')),'/config/appsettings')]"
+                  ],
+                  "properties": {
+                    "RepoUrl": "[parameters('repoUrl')]",
+                    "branch": "[parameters('branch')]",
+                    "IsManualIntegration": "false"
+                  }
                 }
             ]
         },
