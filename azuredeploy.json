@@ -120,46 +120,46 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Web/serverfarms', variables('Serviceplan_name'))]"
             ],
-            "resources": [
-                {
-                    "name": "appsettings",
-                    "type": "config",
-                    "apiVersion": "2015-08-01",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Web/sites', parameters('FunctionApp_name'))]",
-                        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
-                        "[concat('Microsoft.DocumentDb/databaseAccounts/', parameters('Cosmos_Account_name'))]"
-                    ],
-                    "tags": {
-                        "displayName": "FunctionAppSettings"
-                    },
-                    "properties": {
-                        "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
-                        "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
-                        "FUNCTIONS_EXTENSION_VERSION": "~1",
-                        "video_indexer_key": "setthisvalue",
-                        "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
-                        "WEBSITE_CONTENTSHARE": "[toLower(parameters('FunctionApp_name'))]",
-                        "cosmos_enpoint": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('Cosmos_Account_name'))).documentEndpoint]",
-                        "cosmos_key": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('Cosmos_Account_name')), '2015-04-08').primaryMasterKey]"
-                    }
-                },
-                {
-                  "type": "sourcecontrols",
-                  "name": "web",
-                  "apiVersion": "2015-08-01",
-                  "comments": "This section sets up source control for continuous integration on the Function app and pulls the source code down from Github.",
-                  "dependsOn": [
-                    "[resourceId('Microsoft.Web/sites/', parameters('FunctionApp_name'))]",
-                    "[concat(resourceId('Microsoft.Web/sites/', parameters('FunctionApp_name')),'/config/appsettings')]"
-                  ],
-                  "properties": {
-                    "repoUrl": "[parameters('repoUrl')]",
-                    "branch": "[parameters('branch')]",
-                    "IsManualIntegration": true
-                  }
-                }
-            ]
+          "resources": [
+            {
+              "type": "sourcecontrols",
+              "name": "web",
+              "apiVersion": "2015-08-01",
+              "comments": "This section sets up source control for continuous integration on the Function app and pulls the source code down from Github.",
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites/', parameters('FunctionApp_name'))]"
+              ],
+              "properties": {
+                "repoUrl": "[parameters('repoUrl')]",
+                "branch": "[parameters('branch')]",
+                "IsManualIntegration": true
+              }
+            },
+            {
+              "name": "appsettings",
+              "type": "config",
+              "apiVersion": "2015-08-01",
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('FunctionApp_name'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+                "[concat('Microsoft.DocumentDb/databaseAccounts/', parameters('Cosmos_Account_name'))]"
+              ],
+              "tags": {
+                "displayName": "FunctionAppSettings"
+              },
+              "properties": {
+                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+                "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+                "FUNCTIONS_EXTENSION_VERSION": "~1",
+                "video_indexer_key": "setthisvalue",
+                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+                "WEBSITE_CONTENTSHARE": "[toLower(parameters('FunctionApp_name'))]",
+                "cosmos_enpoint": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('Cosmos_Account_name'))).documentEndpoint]",
+                "cosmos_key": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('Cosmos_Account_name')), '2015-04-08').primaryMasterKey]"
+              }
+            }
+
+          ]
         },
         {
             "type": "Microsoft.Web/sites/config",
