@@ -5,7 +5,7 @@
         "sourceCodeRepositoryURL":{
             "type" : "String"
         },
-        "sourceCodeBranch" : {
+        "Branch" : {
             "type" : "String"
         },
         "Cosmos_Account_name": {
@@ -40,7 +40,7 @@
           ],
           "properties": {
             "RepoUrl": "[parameters('sourceCodeRepositoryURL')]",
-            "branch": "[parameters('sourceCodeBranch')]",
+            "branch": "[parameters('Branch')]",
             "IsManualIntegration": "false"
           }
         },
