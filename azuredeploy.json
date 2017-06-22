@@ -1,45 +1,44 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
-        "databaseAccounts_videobreakdowncosmos_name": {
-            "defaultValue": null,
-            "type": "SecureString"
+        "parameters": {
+          "repoUrl": {
+          "type": "string"
         },
-        "databaseAccounts_videobreakdowncosmos_name_1": {
+        "branch": {
+          "type": "string"
+        },
+        "Cosmos_Account_name": {
+            "defaultValue": "cosmos-vi-api-poc",
+            "type": "String",
+            "minLength": 3,
+            "maxLength": 50
+        },
+        "Cosmos_Database_name": {
             "defaultValue": "videobreakdowncosmos",
             "type": "String"
         },
-        "storageAccounts_videostorageds_name": {
-            "defaultValue": "videostorageds",
-            "type": "String"
-        },
-        "serverfarms_VI_API_POCPlan_name": {
-            "defaultValue": "VI-API-POCPlan",
-            "type": "String"
-        },
-        "sites_VI_API_POC_name": {
-            "defaultValue": "VI-API-POC",
-            "type": "String"
-        },
-        "config_web_name": {
-            "defaultValue": "VI-API-POC/web",
+        "FunctionApp_name": {
+            "defaultValue": "VI-API-POC2",
             "type": "String"
         }
     },
-    "variables": {},
+    "variables": {
+        "Serviceplan_name": "[concat(parameters('FunctionApp_name'), 'plan')]",
+        "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'azfunctions')]",
+        "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
+    },
     "resources": [
+         
         {
-            "comments": "Generalized from resource: '/subscriptions/3af88148-8e0f-4788-804d-a2367b181169/resourceGroups/EnlacePOC/providers/Microsoft.DocumentDB/databaseAccounts/videobreakdowncosmos'.",
             "type": "Microsoft.DocumentDB/databaseAccounts",
             "kind": "GlobalDocumentDB",
-            "name": "[parameters('databaseAccounts_videobreakdowncosmos_name_1')]",
+            "name": "[parameters('Cosmos_Account_name')]",
             "apiVersion": "2015-04-08",
             "location": "South Central US",
             "tags": {
                 "defaultExperience": "DocumentDB"
             },
-            "scale": null,
             "properties": {
                 "databaseAccountOfferType": "Standard",
                 "consistencyPolicy": {
@@ -47,28 +46,25 @@
                     "maxIntervalInSeconds": 5,
                     "maxStalenessPrefix": 100
                 },
-                "name": "[parameters('databaseAccounts_videobreakdowncosmos_name')]"
+                "name": "[parameters('Cosmos_Database_name')]"
             },
             "dependsOn": []
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/3af88148-8e0f-4788-804d-a2367b181169/resourceGroups/enlacepoc/providers/Microsoft.Storage/storageAccounts/videostorageds'.",
             "type": "Microsoft.Storage/storageAccounts",
             "sku": {
                 "name": "Standard_LRS",
                 "tier": "Standard"
             },
             "kind": "Storage",
-            "name": "[parameters('storageAccounts_videostorageds_name')]",
+            "name": "[variables('storageAccountName')]",
             "apiVersion": "2016-01-01",
             "location": "southcentralus",
             "tags": {},
-            "scale": null,
             "properties": {},
             "dependsOn": []
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/3af88148-8e0f-4788-804d-a2367b181169/resourceGroups/EnlacePOC/providers/Microsoft.Web/serverfarms/VI-API-POCPlan'.",
             "type": "Microsoft.Web/serverfarms",
             "sku": {
                 "name": "Y1",
@@ -78,66 +74,101 @@
                 "capacity": 0
             },
             "kind": "functionapp",
-            "name": "[parameters('serverfarms_VI_API_POCPlan_name')]",
+            "name": "[variables('Serviceplan_name')]",
             "apiVersion": "2015-08-01",
             "location": "South Central US",
-            "scale": null,
             "properties": {
-                "name": "[parameters('serverfarms_VI_API_POCPlan_name')]",
+                "name": "[variables('Serviceplan_name')]",
                 "numberOfWorkers": 0
             },
             "dependsOn": []
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/3af88148-8e0f-4788-804d-a2367b181169/resourceGroups/EnlacePOC/providers/Microsoft.Web/sites/VI-API-POC'.",
             "type": "Microsoft.Web/sites",
             "kind": "functionApp",
-            "name": "[parameters('sites_VI_API_POC_name')]",
+            "name": "[parameters('FunctionApp_name')]",
             "apiVersion": "2015-08-01",
             "location": "South Central US",
             "tags": {
                 "hidden-related:/subscriptions/3af88148-8e0f-4788-804d-a2367b181169/resourceGroups/EnlacePOC/providers/Microsoft.Web/serverfarms/VI-API-POCPlan": "empty"
             },
-            "scale": null,
             "properties": {
-                "name": "[parameters('sites_VI_API_POC_name')]",
+                "name": "[parameters('FunctionApp_name')]",
                 "hostNames": [
-                    "vi-api-poc.azurewebsites.net"
+                    "[concat(parameters('FunctionApp_name'),'.azurewebsites.net')]"
                 ],
                 "enabledHostNames": [
-                    "vi-api-poc.azurewebsites.net",
-                    "vi-api-poc.scm.azurewebsites.net"
+                    "[concat(parameters('FunctionApp_name'),'.azurewebsites.net')]",
+                    "[concat(parameters('FunctionApp_name'),'.scm.azurewebsites.net')]"
                 ],
                 "hostNameSslStates": [
                     {
-                        "name": "[concat(parameters('sites_VI_API_POC_name'),'vi-api-poc.azurewebsites.net')]",
+                        "name": "[concat(parameters('FunctionApp_name'),'.azurewebsites.net')]",
                         "sslState": 0,
                         "thumbprint": null,
                         "ipBasedSslState": 0
                     },
                     {
-                        "name": "[concat(parameters('sites_VI_API_POC_name'),'vi-api-poc.scm.azurewebsites.net')]",
+                        "name": "[concat(parameters('FunctionApp_name'),'.scm.azurewebsites.net')]",
                         "sslState": 0,
                         "thumbprint": null,
                         "ipBasedSslState": 0
                     }
                 ],
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_VI_API_POCPlan_name'))]"
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('Serviceplan_name'))]"
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_VI_API_POCPlan_name'))]"
-            ]
+                "[resourceId('Microsoft.Web/serverfarms', variables('Serviceplan_name'))]"
+            ],
+          "resources": [
+            {
+              "type": "sourcecontrols",
+              "name": "web",
+              "apiVersion": "2015-08-01",
+              "comments": "This section sets up source control for continuous integration on the Function app and pulls the source code down from Github.",
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites/', parameters('FunctionApp_name'))]"
+              ],
+              "properties": {
+                "repoUrl": "[parameters('repoUrl')]",
+                "branch": "[parameters('branch')]",
+                "IsManualIntegration": true
+              }
+            },
+            {
+              "name": "appsettings",
+              "type": "config",
+              "apiVersion": "2015-08-01",
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('FunctionApp_name'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+                "[concat('Microsoft.DocumentDb/databaseAccounts/', parameters('Cosmos_Account_name'))]"
+              ],
+              "tags": {
+                "displayName": "FunctionAppSettings"
+              },
+              "properties": {
+                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+                "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+                "FUNCTIONS_EXTENSION_VERSION": "~1",
+                "video_indexer_key": "setthisvalue",
+                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+                "WEBSITE_CONTENTSHARE": "[toLower(parameters('FunctionApp_name'))]",
+                "cosmos_enpoint": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('Cosmos_Account_name'))).documentEndpoint]",
+                "cosmos_key": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('Cosmos_Account_name')), '2015-04-08').primaryMasterKey]"
+              }
+            }
+
+          ]
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/3af88148-8e0f-4788-804d-a2367b181169/resourceGroups/EnlacePOC/providers/Microsoft.Web/sites/VI-API-POC/config/web'.",
             "type": "Microsoft.Web/sites/config",
-            "name": "[parameters('config_web_name')]",
+            "name": "[concat(parameters('FunctionApp_name'), '/web')]",
             "apiVersion": "2015-08-01",
             "location": "South Central US",
             "tags": {
                 "hidden-related:/subscriptions/3af88148-8e0f-4788-804d-a2367b181169/resourceGroups/EnlacePOC/providers/Microsoft.Web/serverfarms/VI-API-POCPlan": "empty"
             },
-            "scale": null,
             "properties": {
                 "numberOfWorkers": 1,
                 "defaultDocuments": [
@@ -207,30 +238,30 @@
                 "tracingOptions": null,
                 "vnetName": "",
                 "siteAuthEnabled": false,
-                "siteAuthSettings": {
-                    "enabled": null,
-                    "unauthenticatedClientAction": null,
-                    "tokenStoreEnabled": null,
-                    "allowedExternalRedirectUrls": null,
-                    "defaultProvider": null,
-                    "clientId": null,
-                    "clientSecret": null,
-                    "issuer": null,
-                    "allowedAudiences": null,
-                    "additionalLoginParams": null,
-                    "isAadAutoProvisioned": false,
-                    "googleClientId": null,
-                    "googleClientSecret": null,
-                    "googleOAuthScopes": null,
-                    "facebookAppId": null,
-                    "facebookAppSecret": null,
-                    "facebookOAuthScopes": null,
-                    "twitterConsumerKey": null,
-                    "twitterConsumerSecret": null,
-                    "microsoftAccountClientId": null,
-                    "microsoftAccountClientSecret": null,
-                    "microsoftAccountOAuthScopes": null
-                },
+              "siteAuthSettings": {
+                "enabled": null,
+                "unauthenticatedClientAction": null,
+                "tokenStoreEnabled": null,
+                "allowedExternalRedirectUrls": null,
+                "defaultProvider": null,
+                "clientId": null,
+                "clientSecret": null,
+                "issuer": null,
+                "allowedAudiences": null,
+                "additionalLoginParams": null,
+                "isAadAutoProvisioned": false,
+                "googleClientId": null,
+                "googleClientSecret": null,
+                "googleOAuthScopes": null,
+                "facebookAppId": null,
+                "facebookAppSecret": null,
+                "facebookOAuthScopes": null,
+                "twitterConsumerKey": null,
+                "twitterConsumerSecret": null,
+                "microsoftAccountClientId": null,
+                "microsoftAccountClientSecret": null,
+                "microsoftAccountOAuthScopes": null
+              },
                 "cors": {
                     "allowedOrigins": [
                         "https://functions.azure.com",
@@ -245,7 +276,7 @@
                 "ipSecurityRestrictions": null
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_VI_API_POC_name'))]"
+                "[resourceId('Microsoft.Web/sites', parameters('FunctionApp_name'))]"
             ]
         }
     ]
