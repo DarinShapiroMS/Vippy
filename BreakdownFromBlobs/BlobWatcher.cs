@@ -11,6 +11,7 @@ using System.Threading;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using OrchestrationFunctions;
+using Microsoft.WindowsAzure.Storage;
 
 namespace BreakdownFromBlobs
 {
@@ -18,9 +19,6 @@ namespace BreakdownFromBlobs
     {
 
         private static TraceWriter _log;
-        private const string EndpointUrl = "<your endpoint URL>";
-        private const string PrimaryKey = "<your primary key>";
-        private static DocumentClient client;
 
         [FunctionName("BlobWatcher")]
         public static async System.Threading.Tasks.Task RunAsync([BlobTrigger("video-input/{name}", Connection = "AzureWebJobsStorage")] CloudBlockBlob myBlob,
@@ -44,45 +42,38 @@ namespace BreakdownFromBlobs
 
             // blob filename
             string fileName = myBlob.Name;
+            log.Info($"Blob named {fileName} being procesed by BlobWatcher function..");
 
             // get a SAS url for the blob       
             string SaSUrl = GetSasUrl(myBlob);
+            log.Info($"Got SAS url {SaSUrl}");
 
             // call the api to process the video in VideoIndexer
-            var videoBreakdownJson = SubmitToVideoIndexer(SaSUrl);
+            var VideoIndexerUniqueId = SubmitToVideoIndexer(SaSUrl);
+            _log.Info($"VideoId {VideoIndexerUniqueId} submitted to Video Indexer!");
 
-            // stuff the json into Cosmos
-            await SaveInCosmosAsync(videoBreakdownJson);
 
-            
+            // TODO: put in a database to track current jobs
+
+
         }
 
-        private static async System.Threading.Tasks.Task SaveInCosmosAsync(VideoBreakdownPOCO videoBreakdownJson)
-        {
-            string endpoint = ConfigurationManager.AppSettings["cosmos_enpoint"];
-            if (String.IsNullOrEmpty(endpoint))
-                throw new ApplicationException("cosmos_enpoint app setting not set");
-
-            string key = ConfigurationManager.AppSettings["cosmos_key"];
-            if (String.IsNullOrEmpty(key))
-                throw new ApplicationException("cosmos_key app setting not set");
-
-            client = new DocumentClient(new Uri(endpoint), key);
-            
-            Document r = await client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri("VideoBreakdowns", "breakdowns2"), videoBreakdownJson);
-        }
+      
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="SaSUrl">Secure link to video file in Azure Storage</param>
         /// <returns>VideoBreakdown in JSON format</returns>
-        private static VideoBreakdownPOCO SubmitToVideoIndexer(string SaSUrl)
+        private static string SubmitToVideoIndexer(string SaSUrl)
         {
 
-            var client = new HttpClient();
-            var queryString = HttpUtility.ParseQueryString(string.Empty);
+            string Video_Indexer_Callback_url = ConfigurationManager.AppSettings["Video_Indexer_Callback_url"];
+            if (String.IsNullOrEmpty(Video_Indexer_Callback_url))
+                throw new ApplicationException("Video_Indexer_Callback_url app setting not set");
 
+
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
             // These can be used to set meta data visible in the VI portal.  
             // required settings
             queryString["videoUrl"] = SaSUrl;
@@ -92,19 +83,17 @@ namespace BreakdownFromBlobs
             // optional settings - mostly VI portal UI related
             queryString["name"] = "Fashion Video";
             queryString["description"] = "A video of a fashion model";
-            //queryString["externalId"] = "{string}";
+            queryString["callbackUrl"] = Video_Indexer_Callback_url;
+            //queryString["externalId"] = "{string}";   // Use this to track AMS Asset ID, or even unqique customer ID for the video
             //queryString["metadata"] = "{string}";
             //queryString["partition"] = "{string}";
 
-            // Video Indexer API key stored in settings (App Settings in Azure Function portal)
-            string VideoIndexerKey = ConfigurationManager.AppSettings["video_indexer_key"];
-            if (String.IsNullOrEmpty(VideoIndexerKey))
-                throw new ApplicationException("VideoIndexerKey app setting not set");
+
 
             // Video Indexer API Url
-            var apiUrl = "https://videobreakdown.azure-api.net/Breakdowns/Api/Partner/Breakdowns";
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", VideoIndexerKey);
+            var apiUrl = Globals.VideoIndexerApiUrl;
 
+            var client = Globals.GetVideoIndexerHttpClient();
             // post to the API
             var result = client.PostAsync(apiUrl + $"?{queryString}", null).Result;
 
@@ -112,37 +101,11 @@ namespace BreakdownFromBlobs
             var json = result.Content.ReadAsStringAsync().Result;
             var VideoIndexerId = JsonConvert.DeserializeObject<string>(json);
 
-            // monitor progress of indexing operation
-            while (true)
-            {
-                Thread.Sleep(10000);
-
-                result = client.GetAsync(string.Format(apiUrl + "/{0}/State", VideoIndexerId)).Result;
-                json = result.Content.ReadAsStringAsync().Result;
-
-                _log.Info($"VideoId {VideoIndexerId} Processing State: {json}");
-
-                dynamic state = JsonConvert.DeserializeObject(json);
-                if (state.state != "Uploaded" && state.state != "Processing")
-                {
-                    break;
-                }
-            }
-
-            // operation has completed, get the full JSON of the video breakdown
-            result = client.GetAsync(string.Format(apiUrl + "/{0}", VideoIndexerId)).Result;
-            json = result.Content.ReadAsStringAsync().Result;
-
-
-
-            _log.Info($"VideoId {VideoIndexerId} completed processing, {json.Length} bytes returned in JSON response");
-
-
             // delete the breakdown
             //DeleteBreakdown();
             // don't delete for now since we need to use the VI portal to train faces
 
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<VideoBreakdownPOCO>(json); ;
+            return VideoIndexerId;
         }
 
         /// <summary>

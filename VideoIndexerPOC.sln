@@ -8,13 +8,19 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9E619FD0-9258-428C-A0C4-1F86F7658846}"
 	ProjectSection(SolutionItems) = preProject
 		azuredeploy.json = azuredeploy.json
+		..\..\..\..\Downloads\VippyPOCTemplate\parameters.json = ..\..\..\..\Downloads\VippyPOCTemplate\parameters.json
 		SampleBreakdown.json = SampleBreakdown.json
+		..\..\..\..\OneDrive - Microsoft\Customers\Enlace\Slide1.gif = ..\..\..\..\OneDrive - Microsoft\Customers\Enlace\Slide1.gif
+		..\..\..\..\OneDrive - Microsoft\Customers\Enlace\Slide2.gif = ..\..\..\..\OneDrive - Microsoft\Customers\Enlace\Slide2.gif
+		..\..\..\..\Downloads\VippyPOCTemplate\template.json = ..\..\..\..\Downloads\VippyPOCTemplate\template.json
 	EndProjectSection
 	ProjectSection(FolderGlobals) = preProject
 		__JSONSchema = http://json.schemastore.org/commands
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrchestrationFunctions", "BreakdownFromBlobs\OrchestrationFunctions.csproj", "{B30E65E7-7E73-412F-AB8F-32ADDB3DA99C}"
+EndProject
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "VippyResourceGroupDeployment", "VippyResourceGroupDeployment\VippyResourceGroupDeployment.deployproj", "{DFD169A4-9597-4A08-92A8-F15359CA2D7C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +36,10 @@ Global
 		{B30E65E7-7E73-412F-AB8F-32ADDB3DA99C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B30E65E7-7E73-412F-AB8F-32ADDB3DA99C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B30E65E7-7E73-412F-AB8F-32ADDB3DA99C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFD169A4-9597-4A08-92A8-F15359CA2D7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFD169A4-9597-4A08-92A8-F15359CA2D7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFD169A4-9597-4A08-92A8-F15359CA2D7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFD169A4-9597-4A08-92A8-F15359CA2D7C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
