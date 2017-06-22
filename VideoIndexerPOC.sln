@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26510.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubmitToVideoIndexer", "SubmitToVideoIndexer\SubmitToVideoIndexer.csproj", "{1DB5BC8B-452F-4BBD-96F2-BE6E9C015ADA}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9E619FD0-9258-428C-A0C4-1F86F7658846}"
 	ProjectSection(SolutionItems) = preProject
 		azuredeploy.json = azuredeploy.json
@@ -20,26 +18,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrchestrationFunctions", "BreakdownFromBlobs\OrchestrationFunctions.csproj", "{B30E65E7-7E73-412F-AB8F-32ADDB3DA99C}"
 EndProject
-Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "VippyResourceGroupDeployment", "VippyResourceGroupDeployment\VippyResourceGroupDeployment.deployproj", "{DFD169A4-9597-4A08-92A8-F15359CA2D7C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1DB5BC8B-452F-4BBD-96F2-BE6E9C015ADA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1DB5BC8B-452F-4BBD-96F2-BE6E9C015ADA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1DB5BC8B-452F-4BBD-96F2-BE6E9C015ADA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1DB5BC8B-452F-4BBD-96F2-BE6E9C015ADA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B30E65E7-7E73-412F-AB8F-32ADDB3DA99C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B30E65E7-7E73-412F-AB8F-32ADDB3DA99C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B30E65E7-7E73-412F-AB8F-32ADDB3DA99C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B30E65E7-7E73-412F-AB8F-32ADDB3DA99C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DFD169A4-9597-4A08-92A8-F15359CA2D7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DFD169A4-9597-4A08-92A8-F15359CA2D7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DFD169A4-9597-4A08-92A8-F15359CA2D7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DFD169A4-9597-4A08-92A8-F15359CA2D7C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
