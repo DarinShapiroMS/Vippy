@@ -6,6 +6,7 @@ using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace OrchestrationFunctions
 {
@@ -29,36 +30,38 @@ namespace OrchestrationFunctions
             var json = result.Content.ReadAsStringAsync().Result;
 
             var poco = JsonConvert.DeserializeObject<VideoBreakdownPOCO>(json);
-            await SaveInCosmosAsync(poco);
+            await StoreBreakdownJsonInCosmos(poco);
+            await UpdateProcessingStateAsync(completionData["id"]);
 
         }
 
-        private static async System.Threading.Tasks.Task SaveInCosmosAsync(VideoBreakdownPOCO videoBreakdownJson)
+        private static async Task UpdateProcessingStateAsync(string VIUniqueId)
         {
-            string endpoint = ConfigurationManager.AppSettings["cosmos_enpoint"];
-            if (String.IsNullOrEmpty(endpoint))
-                throw new ApplicationException("cosmos_enpoint app setting not set");
+            var collectionName = "VIProcessingState";
+            var client = Globals.GetCosmosClient(collectionName);
 
-            string key = ConfigurationManager.AppSettings["cosmos_key"];
-            if (String.IsNullOrEmpty(key))
-                throw new ApplicationException("cosmos_key app setting not set");
+            // first get the already existing document by id         
+            var response = await client.ReadDocumentAsync(UriFactory.CreateDocumentUri(Globals.CosmosDatabasename, collectionName, VIUniqueId));
+            VIProcessingStatePOCO state = (VIProcessingStatePOCO)(dynamic)response.Resource;
 
-            string cosmos_database_name = ConfigurationManager.AppSettings["cosmos_database_name"];
-            if (String.IsNullOrEmpty(cosmos_database_name))
-                throw new ApplicationException("cosmos_database_name app setting not set");
+            // update property values then replace
+            state.EndTime = DateTime.Now;
+            response = await client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(Globals.CosmosDatabasename, collectionName, state.VIUniqueId), state);
 
-            string cosmos_collection_name = ConfigurationManager.AppSettings["cosmos_collection_name"];
-            if (String.IsNullOrEmpty(cosmos_collection_name))
-                throw new ApplicationException("cosmos_collection_name app setting not set");
+        }
 
-            var client = new DocumentClient(new Uri(endpoint), key);
+        private static async System.Threading.Tasks.Task StoreBreakdownJsonInCosmos(VideoBreakdownPOCO videoBreakdownJson)
+        {
+            //string cosmos_collection_name = ConfigurationManager.AppSettings["cosmos_collection_name"];
+            //if (String.IsNullOrEmpty(cosmos_collection_name))
+            //    throw new ApplicationException("cosmos_collection_name app setting not set");
 
-            // make sure the database and collection already exist
-            await client.CreateDatabaseIfNotExistsAsync(new Database { Id = cosmos_database_name });
-            await client.CreateDocumentCollectionIfNotExistsAsync(UriFactory.CreateDatabaseUri(cosmos_database_name), new DocumentCollection { Id = cosmos_collection_name });
+            var collectionName = "Breakdowns";
+            var client = Globals.GetCosmosClient(collectionName);
 
+           
             // save the json as a new document
-            Document r = await client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(cosmos_database_name, cosmos_collection_name), videoBreakdownJson);
+            Document r = await client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(Globals.CosmosDatabasename, collectionName), videoBreakdownJson);
         }
     }
 }

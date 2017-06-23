@@ -49,23 +49,23 @@ namespace BreakdownFromBlobs
             log.Info($"Got SAS url {SaSUrl}");
 
             // call the api to process the video in VideoIndexer
-            var VideoIndexerUniqueId = SubmitToVideoIndexer(SaSUrl);
+            var VideoIndexerUniqueId = SubmitToVideoIndexerAsync(SaSUrl);
             _log.Info($"VideoId {VideoIndexerUniqueId} submitted to Video Indexer!");
 
 
             // TODO: put in a database to track current jobs
-
+            await StoreProcessingStateRecordInCosmosAsync(fileName, VideoIndexerUniqueId.Result);
 
         }
 
-      
+
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="SaSUrl">Secure link to video file in Azure Storage</param>
         /// <returns>VideoBreakdown in JSON format</returns>
-        private static string SubmitToVideoIndexer(string SaSUrl)
+        private static async System.Threading.Tasks.Task<string> SubmitToVideoIndexerAsync(string SaSUrl)
         {
 
             string Video_Indexer_Callback_url = ConfigurationManager.AppSettings["Video_Indexer_Callback_url"];
@@ -88,25 +88,54 @@ namespace BreakdownFromBlobs
             //queryString["metadata"] = "{string}";
             //queryString["partition"] = "{string}";
 
-
-
-            // Video Indexer API Url
+       
             var apiUrl = Globals.VideoIndexerApiUrl;
-
             var client = Globals.GetVideoIndexerHttpClient();
+
             // post to the API
-            var result = client.PostAsync(apiUrl + $"?{queryString}", null).Result;
+            var result = await client.PostAsync(apiUrl + $"?{queryString}", null);
 
             // the JSON result in this case is the VideoIndexer assigned ID for this video.
             var json = result.Content.ReadAsStringAsync().Result;
-            var VideoIndexerId = JsonConvert.DeserializeObject<string>(json);
+            
+            
+            //var VideoIndexerId = JsonConvert.DeserializeObject<string>(json);
+
+            
 
             // delete the breakdown
             //DeleteBreakdown();
             // don't delete for now since we need to use the VI portal to train faces
 
-            return VideoIndexerId;
+            return json;
         }
+
+
+        /// <summary>
+        /// Inserts a receipt like record in the database. This record will be updated when the processing
+        /// is completed with success or error details
+        /// </summary>
+        /// <param name="videoIndexerId"></param>
+        /// <returns></returns>
+        private static async System.Threading.Tasks.Task StoreProcessingStateRecordInCosmosAsync(string blobName, string videoIndexerId)
+        {
+            var collectionName = "VIProcessingState";
+            var client = Globals.GetCosmosClient(collectionName);
+
+            var state = new VIProcessingStatePOCO()
+            {
+                BlobName = blobName,
+                VIUniqueId = videoIndexerId,
+                StartTime = DateTime.Now,
+                EndTime = null,
+                ErrorMessage = ""
+            };            
+          
+            // save the json as a new document
+            Document r = await client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(Globals.CosmosDatabasename, collectionName), state);
+
+        }
+
 
         /// <summary>
         /// Gets a URL with a SAS token that is good to read the file for 1 hour
