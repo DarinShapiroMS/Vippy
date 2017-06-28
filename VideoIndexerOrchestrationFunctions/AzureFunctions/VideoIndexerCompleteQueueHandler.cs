@@ -11,10 +11,8 @@ using Microsoft.WindowsAzure.Storage.Queue;
 
 namespace OrchestrationFunctions
 {
-    public static class VideoIndexerCompleteQueueWatcher
+    public static class VideoIndexerCompleteQueueHandler
     {
-
-        
 
         [FunctionName("VideoIndexingComplete")]
         public static async Task RunAsync([QueueTrigger("vi-processing-complete", Connection = "AzureWebJobsStorage")]CloudQueueMessage myQueueItem, TraceWriter log)

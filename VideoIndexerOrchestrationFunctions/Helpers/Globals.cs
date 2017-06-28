@@ -6,7 +6,6 @@ using System;
 using System.Configuration;
 using System.IO;
 using System.Net.Http;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Web;
@@ -15,7 +14,7 @@ namespace OrchestrationFunctions
 {
     public class Globals
     {
-        public static string VideoIndexerApiUrl = "https://videobreakdown.azure-api.net/Breakdowns/Api/Partner/Breakdowns";
+        public static readonly string VideoIndexerApiUrl = "https://videobreakdown.azure-api.net/Breakdowns/Api/Partner/Breakdowns";
 
 
         public static HttpClient GetVideoIndexerHttpClient()

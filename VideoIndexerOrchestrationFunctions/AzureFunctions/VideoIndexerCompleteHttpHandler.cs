@@ -11,7 +11,7 @@ using System.Configuration;
 
 namespace OrchestrationFunctions
 {
-    public static class Webhook2Queue
+    public static class VideoIndexerCompleteHttpHandler
     {
         /// <summary>
         /// All this function does is take the input from the http trigger invocation and place it in a queue.  This

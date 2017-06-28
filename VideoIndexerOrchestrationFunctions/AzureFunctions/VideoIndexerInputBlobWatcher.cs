@@ -1,17 +1,11 @@
-﻿using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using Microsoft.Azure.WebJobs;
+﻿using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage.Blob;
-using Newtonsoft.Json;
-using OrchestrationFunctions;
 using System;
-using System.Configuration;
-using System.Web;
 
 namespace OrchestrationFunctions
 {
-    public static class BlobWatcher
+    public static class VideoIndexerInputBlobWatcher
     {
 
         private static TraceWriter _log;

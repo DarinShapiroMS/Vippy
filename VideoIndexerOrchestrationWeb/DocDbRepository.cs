@@ -43,7 +43,11 @@ namespace VideoIndexerOrchestrationWeb
         {
            
 
-            var detail = client.CreateDocumentQuery<VideoBreakdownPOCO>(UriFactory.CreateDocumentCollectionUri(Globals.CosmosDatabasename, Globals.ProcessingStateCosmosCollectionName), "SELECT * FROM c WHERE field=value").FirstOrDefault();
+            var detail = client.CreateDocumentQuery<VideoBreakdownPOCO>(UriFactory.CreateDocumentCollectionUri(
+                Globals.CosmosDatabasename, 
+                Globals.ProcessingStateCosmosCollectionName), 
+                "SELECT * FROM c WHERE field=value")
+                .FirstOrDefault();
             return detail;
         }
     }
