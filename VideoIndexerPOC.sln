@@ -18,7 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrchestrationFunctions", "BreakdownFromBlobs\OrchestrationFunctions.csproj", "{B30E65E7-7E73-412F-AB8F-32ADDB3DA99C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoIndexerOrchestration", "VideoIndexerOrchestration\VideoIndexerOrchestration.csproj", "{7DF24DB9-5860-44D5-B922-EC4A4F3CB402}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoIndexerOrchestrationWeb", "VideoIndexerOrchestration\VideoIndexerOrchestrationWeb.csproj", "{7DF24DB9-5860-44D5-B922-EC4A4F3CB402}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
