@@ -24,9 +24,12 @@ namespace OrchestrationFunctions
         static string _storageAccountName = Environment.GetEnvironmentVariable("MediaServicesStorageAccountName");
         static string _storageAccountKey = Environment.GetEnvironmentVariable("MediaServicesStorageAccountKey");
 
+        private static CloudStorageAccount _amsStorageAccount = null;
         private static CloudStorageAccount _destinationStorageAccount = null;
 
         private static CloudMediaContext _context = MediaServicesHelper.Context;
+
+        public static CloudStorageAccount AmsStorageAccount { get => _amsStorageAccount; set => _amsStorageAccount = value; }
 
         public class AssetfileinJson
         {
@@ -113,9 +116,8 @@ namespace OrchestrationFunctions
                 foreach (var blob in sourceContainer.ListBlobs(String.Empty, true, BlobListingDetails.None, null, null))
                 {
                     log.Info($"Blob URI: {blob.Uri}");
-                    if (blob is CloudBlockBlob)
+                    if (blob is CloudBlockBlob sourceBlob)
                     {
-                        CloudBlockBlob sourceBlob = (CloudBlockBlob)blob;
                         log.Info($"Blob Name: {sourceBlob.Name}");
                         CloudBlockBlob targetBlob = targetContainer.GetBlockBlobReference(sourceBlob.Name);
 

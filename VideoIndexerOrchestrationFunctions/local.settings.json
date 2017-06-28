@@ -9,6 +9,7 @@
     "cosmos_database_name": "VideoBreakdowns",
     "cosmos_collection_name": "Breakdowns",
     "Video_Input_Container": "video-input/{name}",
-    "Video_Indexer_Callback_url": "https://vi-api-poc.azurewebsites.net/api/vicallback"
+    "Video_Indexer_Callback_url": "https://vi-api-poc.azurewebsites.net/api/vicallback",
+    "ams_webhook_url": ""
   }
 }

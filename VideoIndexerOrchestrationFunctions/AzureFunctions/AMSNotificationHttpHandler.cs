@@ -5,12 +5,12 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace OrchestrationFunctions.AzureFunctions
+namespace OrchestrationFunctions
 {
     public static class AMSNotificationHttpHandler
     {
         [FunctionName("AMSNotificationHttpHandler")]
-        public static async Task<object> Run([HttpTrigger(WebHookType = "genericJson")]HttpRequestMessage req, TraceWriter log)
+        public static async Task<object> Run([HttpTrigger(WebHookType = "genericJson",Route = "amscallback" )]HttpRequestMessage req, TraceWriter log)
         {
             log.Info($"Webhook was triggered!");
 
