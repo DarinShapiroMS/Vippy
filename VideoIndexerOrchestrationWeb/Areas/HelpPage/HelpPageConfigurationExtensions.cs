@@ -11,10 +11,10 @@ using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
-using VideoIndexerOrchestration.Areas.HelpPage.ModelDescriptions;
-using VideoIndexerOrchestration.Areas.HelpPage.Models;
+using VideoIndexerOrchestrationWeb.Areas.HelpPage.ModelDescriptions;
+using VideoIndexerOrchestrationWeb.Areas.HelpPage.Models;
 
-namespace VideoIndexerOrchestration.Areas.HelpPage
+namespace VideoIndexerOrchestrationWeb.Areas.HelpPage
 {
     public static class HelpPageConfigurationExtensions
     {

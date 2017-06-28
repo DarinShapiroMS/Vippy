@@ -1,1 +1,1 @@
-﻿<%@ Application Codebehind="Global.asax.cs" Inherits="VideoIndexerOrchestration.WebApiApplication" Language="C#" %>
+﻿<%@ Application Codebehind="Global.asax.cs" Inherits="VideoIndexerOrchestrationWeb.WebApiApplication" Language="C#" %>

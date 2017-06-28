@@ -1,7 +1,7 @@
 using System.Web.Http;
 using System.Web.Mvc;
 
-namespace VideoIndexerOrchestration.Areas.HelpPage
+namespace VideoIndexerOrchestrationWeb.Areas.HelpPage
 {
     public class HelpPageAreaRegistration : AreaRegistration
     {

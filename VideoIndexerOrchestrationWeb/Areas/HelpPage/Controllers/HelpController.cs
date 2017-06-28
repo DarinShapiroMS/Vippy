@@ -1,10 +1,10 @@
 using System;
 using System.Web.Http;
 using System.Web.Mvc;
-using VideoIndexerOrchestration.Areas.HelpPage.ModelDescriptions;
-using VideoIndexerOrchestration.Areas.HelpPage.Models;
+using VideoIndexerOrchestrationWeb.Areas.HelpPage.ModelDescriptions;
+using VideoIndexerOrchestrationWeb.Areas.HelpPage.Models;
 
-namespace VideoIndexerOrchestration.Areas.HelpPage.Controllers
+namespace VideoIndexerOrchestrationWeb.Areas.HelpPage.Controllers
 {
     /// <summary>
     /// The controller that will handle requests for the help page.

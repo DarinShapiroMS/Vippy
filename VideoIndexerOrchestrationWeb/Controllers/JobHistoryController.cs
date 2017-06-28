@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using VideoIndexerOrchestration.Models;
+using VideoIndexerOrchestrationWeb.Models;
 
-namespace VideoIndexerOrchestration.Controllers
+namespace VideoIndexerOrchestrationWeb.Controllers
 {
     public class JobHistoryController : Controller
     {

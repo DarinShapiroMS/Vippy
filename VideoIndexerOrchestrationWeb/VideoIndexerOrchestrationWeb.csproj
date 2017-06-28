@@ -13,7 +13,7 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>VideoIndexerOrchestration</RootNamespace>
+    <RootNamespace>VideoIndexerOrchestrationWeb</RootNamespace>
     <AssemblyName>VideoIndexerOrchestration</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
@@ -265,6 +265,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VideoIndexerOrchestrationFunctions\OrchestrationFunctions.csproj">
+      <Project>{b41bff65-9baa-4e53-b199-3f7563ab46e5}</Project>
+      <Name>OrchestrationFunctions</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

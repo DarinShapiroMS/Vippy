@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net.Http.Headers;
 using System.Web.Http.Description;
-using VideoIndexerOrchestration.Areas.HelpPage.ModelDescriptions;
+using VideoIndexerOrchestrationWeb.Areas.HelpPage.ModelDescriptions;
 
-namespace VideoIndexerOrchestration.Areas.HelpPage.Models
+namespace VideoIndexerOrchestrationWeb.Areas.HelpPage.Models
 {
     /// <summary>
     /// The model that represents an API displayed on the help page.

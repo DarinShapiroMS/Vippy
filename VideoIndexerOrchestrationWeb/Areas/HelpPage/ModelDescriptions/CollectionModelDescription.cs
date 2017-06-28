@@ -1,4 +1,4 @@
-namespace VideoIndexerOrchestration.Areas.HelpPage.ModelDescriptions
+namespace VideoIndexerOrchestrationWeb.Areas.HelpPage.ModelDescriptions
 {
     public class CollectionModelDescription : ModelDescription
     {

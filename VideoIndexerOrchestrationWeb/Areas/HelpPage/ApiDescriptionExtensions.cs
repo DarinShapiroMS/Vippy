@@ -3,7 +3,7 @@ using System.Text;
 using System.Web;
 using System.Web.Http.Description;
 
-namespace VideoIndexerOrchestration.Areas.HelpPage
+namespace VideoIndexerOrchestrationWeb.Areas.HelpPage
 {
     public static class ApiDescriptionExtensions
     {

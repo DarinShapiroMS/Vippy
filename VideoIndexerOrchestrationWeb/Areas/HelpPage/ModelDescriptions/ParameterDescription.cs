@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace VideoIndexerOrchestration.Areas.HelpPage.ModelDescriptions
+namespace VideoIndexerOrchestrationWeb.Areas.HelpPage.ModelDescriptions
 {
     public class ParameterDescription
     {

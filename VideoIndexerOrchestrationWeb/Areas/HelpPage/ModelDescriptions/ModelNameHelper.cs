@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
-namespace VideoIndexerOrchestration.Areas.HelpPage.ModelDescriptions
+namespace VideoIndexerOrchestrationWeb.Areas.HelpPage.ModelDescriptions
 {
     internal static class ModelNameHelper
     {

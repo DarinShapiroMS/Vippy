@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Documents.Linq;
 using System.Linq.Expressions;
 
-namespace VideoIndexerOrchestration
+namespace VideoIndexerOrchestrationWeb
 {
 
     

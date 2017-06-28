@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 
-namespace VideoIndexerOrchestration
+namespace VideoIndexerOrchestrationWeb
 {
     public class WebApiApplication : System.Web.HttpApplication
     {
@@ -19,7 +19,7 @@ namespace VideoIndexerOrchestration
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            DocDbRepository<VideoIndexerOrchestration.Models.VIJob>.Initialize();
+            DocDbRepository<VideoIndexerOrchestrationWeb.Models.VIJob>.Initialize();
         }
     }
 }

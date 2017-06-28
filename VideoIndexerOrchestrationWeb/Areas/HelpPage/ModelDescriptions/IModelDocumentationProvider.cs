@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace VideoIndexerOrchestration.Areas.HelpPage.ModelDescriptions
+namespace VideoIndexerOrchestrationWeb.Areas.HelpPage.ModelDescriptions
 {
     public interface IModelDocumentationProvider
     {

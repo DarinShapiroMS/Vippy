@@ -1,6 +1,6 @@
 using System;
 
-namespace VideoIndexerOrchestration.Areas.HelpPage.ModelDescriptions
+namespace VideoIndexerOrchestrationWeb.Areas.HelpPage.ModelDescriptions
 {
     /// <summary>
     /// Describes a type model.
