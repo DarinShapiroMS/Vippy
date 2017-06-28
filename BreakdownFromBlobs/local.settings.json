@@ -8,7 +8,7 @@
     "cosmos_key": "z0fH5X0V0hqvAc1b8oMDCKxfeWFQ7GQe9ElhX9esvx0Gwa2fEh280EehmS2gFnxm4tGcvdfDCIbAGMO2CDSCZQ==",
     "cosmos_database_name": "VideoBreakdowns",
     "cosmos_collection_name": "Breakdowns",
-    "Video_Input_Container": "video_input",
+    "Video_Input_Container": "video-input/{name}",
     "Video_Indexer_Callback_url": "https://vi-api-poc.azurewebsites.net/api/vicallback"
   }
 }

@@ -1,16 +1,12 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OrchestrationFunctions
 {
     public class VIProcessingStatePOCO
     {
-        [JsonProperty(PropertyName = "VIUniqueId")]
-        public string VIUniqueId { get; set; }
+        [JsonProperty(PropertyName = "id")]
+        public string id { get; set; }
 
         public string BlobName { get; set; }
 

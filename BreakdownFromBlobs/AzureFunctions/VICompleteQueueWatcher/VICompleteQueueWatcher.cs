@@ -1,28 +1,33 @@
 using System;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
-using System.Configuration;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using System.Configuration;
+using Microsoft.WindowsAzure.Storage.Queue;
 
 namespace OrchestrationFunctions
 {
     public static class VideoIndexerCompleteQueueWatcher
     {
 
-
+        
 
         [FunctionName("VideoIndexingComplete")]
-        public static async System.Threading.Tasks.Task RunAsync([QueueTrigger("vi-processing-complete", Connection = "AzureWebJobsStorage")]string myQueueItem, TraceWriter log)
+        public static async Task RunAsync([QueueTrigger("vi-processing-complete", Connection = "AzureWebJobsStorage")]CloudQueueMessage myQueueItem, TraceWriter log)
         {
-
-            log.Info($"C# Queue trigger function processed: {myQueueItem}");
+            string queueContents = myQueueItem.AsString;
 
             // queue item should be id & state
-            Dictionary<string, string> completionData = JsonConvert.DeserializeObject<Dictionary<string, string>>(myQueueItem);
+            Dictionary<string, string> completionData = JsonConvert.DeserializeObject<Dictionary<string, string>>(queueContents);
+
+            // ignore if not proper state
+            if (completionData["state"] != "Processed")
+                return;
+
 
             var apiUrl = Globals.VideoIndexerApiUrl;
             var client = Globals.GetVideoIndexerHttpClient();
@@ -37,20 +42,36 @@ namespace OrchestrationFunctions
 
         private static async Task UpdateProcessingStateAsync(string VIUniqueId)
         {
-            var collectionName = "VIProcessingState";
+            var collectionName = Globals.ProcessingStateCosmosCollectionName;
             var client = Globals.GetCosmosClient(collectionName);
+            var collectionLink = UriFactory.CreateDocumentCollectionUri(Globals.CosmosDatabasename, collectionName);
+            // first get the already existing document by id   
+            ResourceResponse<Document> response;
+            VIProcessingStatePOCO state;
+            try
+            {
+                response = await client.ReadDocumentAsync(UriFactory.CreateDocumentUri(Globals.CosmosDatabasename, collectionName, VIUniqueId));
+                state = (VIProcessingStatePOCO)(dynamic)response.Resource;
+            }
+            catch (Exception e)
+            {
+                // If document not found, probably an artifact of dev env where docs are being deleted occasionally midway 
+                // through processing.  Just create a new one.
+                state = new VIProcessingStatePOCO()
+                {
+                    id = VIUniqueId
+                };
+            }
+             
 
-            // first get the already existing document by id         
-            var response = await client.ReadDocumentAsync(UriFactory.CreateDocumentUri(Globals.CosmosDatabasename, collectionName, VIUniqueId));
-            VIProcessingStatePOCO state = (VIProcessingStatePOCO)(dynamic)response.Resource;
-
-            // update property values then replace
+            // update property values then upsert
             state.EndTime = DateTime.Now;
-            response = await client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(Globals.CosmosDatabasename, collectionName, state.VIUniqueId), state);
+            response = await client.UpsertDocumentAsync(collectionLink, state);
+            
 
         }
 
-        private static async System.Threading.Tasks.Task StoreBreakdownJsonInCosmos(VideoBreakdownPOCO videoBreakdownJson)
+        private static async Task StoreBreakdownJsonInCosmos(VideoBreakdownPOCO videoBreakdownJson)
         {
             //string cosmos_collection_name = ConfigurationManager.AppSettings["cosmos_collection_name"];
             //if (String.IsNullOrEmpty(cosmos_collection_name))
@@ -59,9 +80,18 @@ namespace OrchestrationFunctions
             var collectionName = "Breakdowns";
             var client = Globals.GetCosmosClient(collectionName);
 
-           
+
             // save the json as a new document
-            Document r = await client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(Globals.CosmosDatabasename, collectionName), videoBreakdownJson);
+            try
+            {
+                Document r = await client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(Globals.CosmosDatabasename, collectionName), videoBreakdownJson);
+            }
+            catch(Exception e)
+            {
+                // ignore for now, but maybe should replace the document if it already exists.. 
+                // seems to be caused by dev environment where queue items are being reprocesssed
+            }
         }
+
     }
 }

@@ -7,15 +7,28 @@ using Microsoft.Azure.WebJobs.Host;
 using System.Threading.Tasks;
 using System;
 using Newtonsoft.Json;
+using System.Configuration;
 
-namespace OrchestrationFunction
+namespace OrchestrationFunctions
 {
     public static class Webhook2Queue
     {
+        /// <summary>
+        /// All this function does is take the input from the http trigger invocation and place it in a queue.  This
+        /// way any downstream processing is more reliable and resiliant to errors, transient or otherwise
+        /// </summary>
+        /// <param name="req"></param>
+        /// <param name="log"></param>
+        /// <param name="outputQueue"></param>
+        /// <returns></returns>
         [FunctionName("Webhook2Queue")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "vicallback")]HttpRequestMessage req,  TraceWriter log, [Queue("vi-processing-complete", Connection = "AzureWebJobsStorage")] IAsyncCollector<string> outputQueue)
+        public static async Task<HttpResponseMessage> Run(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "vicallback")]HttpRequestMessage req,  
+            TraceWriter log, 
+            [Queue("vi-processing-complete", Connection = "AzureWebJobsStorage")] IAsyncCollector<string> outputQueue
+            )
         {
-            log.Info("Webhook2Queue function called");
+            Globals.LogMessage(log,"Webhook2Queue function called");
 
             var queryParams =  req.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
 
@@ -27,15 +40,12 @@ namespace OrchestrationFunction
 
                 await outputQueue.AddAsync(queueJson);
 
-                foreach (string keyName in queryParams.Keys)
-                {
-                    log.Info($"Form variable named {keyName} found posted to httpTrigger");
-                } 
+                //foreach (string keyName in queryParams.Keys)
+                //{
+                //    Globals.LogMessage(log,$"Form variable named {keyName} found posted to httpTrigger");
+                //} 
             }
-
             
-           
-            // Fetching the name from the path parameter in the request URL
             return req.CreateResponse(HttpStatusCode.OK, queueJson);
         }
     }
