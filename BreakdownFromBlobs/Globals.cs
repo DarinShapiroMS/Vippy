@@ -79,6 +79,7 @@ namespace OrchestrationFunctions
 
             return VideoIndexerId;
         }
+      
         /// <summary>
         /// Inserts a receipt like record in the database. This record will be updated when the processing
         /// is completed with success or error details
@@ -104,12 +105,11 @@ namespace OrchestrationFunctions
 
         }
 
-
         /// <summary>
         /// Returns a new DocumentClient instantiated with endpoint and key
         /// </summary>
         /// <returns></returns>
-        public static DocumentClient GetCosmosClient()
+        private static DocumentClient GetCosmosClient()
         {
             string endpoint = ConfigurationManager.AppSettings["cosmos_enpoint"];
             if (String.IsNullOrEmpty(endpoint))
