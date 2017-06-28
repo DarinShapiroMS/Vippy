@@ -21,7 +21,7 @@ namespace OrchestrationFunctions
         /// </summary>
         /// <param name="myQueueItem"></param>
         /// <param name="log"></param>
-        [FunctionName("AMSEncodingCompleteHandler")]
+        [FunctionName("AMSNotificationQueueHandler")]
         public static async Task RunAsync([QueueTrigger("encoding-complete", Connection = "AzureWebJobsStorage")]string myQueueItem, TraceWriter log)
         {
             //TODO: validate AMS job notification.

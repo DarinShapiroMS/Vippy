@@ -11,7 +11,7 @@ namespace OrchestrationFunctions
         private static TraceWriter _log;
      
 
-        [FunctionName("BlobWatcher")]
+        [FunctionName("VideoIndexerInputBlobWatcher")]
         public static async System.Threading.Tasks.Task RunAsync([BlobTrigger("%Video_Input_Container%", Connection = "AzureWebJobsStorage")] CloudBlockBlob myBlob,
             string name,
             TraceWriter log

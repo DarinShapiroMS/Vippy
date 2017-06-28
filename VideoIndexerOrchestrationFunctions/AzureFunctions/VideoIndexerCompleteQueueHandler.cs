@@ -14,7 +14,7 @@ namespace OrchestrationFunctions
     public static class VideoIndexerCompleteQueueHandler
     {
 
-        [FunctionName("VideoIndexingComplete")]
+        [FunctionName("VideoIndexerCompleteQueueHandler")]
         public static async Task RunAsync([QueueTrigger("vi-processing-complete", Connection = "AzureWebJobsStorage")]CloudQueueMessage myQueueItem, TraceWriter log)
         {
             string queueContents = myQueueItem.AsString;

@@ -21,7 +21,7 @@ namespace OrchestrationFunctions
         /// <param name="log"></param>
         /// <param name="outputQueue"></param>
         /// <returns></returns>
-        [FunctionName("Webhook2Queue")]
+        [FunctionName("VideoIndexerCompleteHttpHandler")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "vicallback")]HttpRequestMessage req,  
             TraceWriter log, 
