@@ -12,7 +12,8 @@ namespace OrchestrationFunctions
         [FunctionName("AMSNotificationHttpHandler")]
         public static async Task<object> Run([HttpTrigger(WebHookType = "genericJson",Route = "amscallback" )]HttpRequestMessage req, TraceWriter log)
         {
-            log.Info($"Webhook was triggered!");
+            log.Info($"Webhook was triggered by {req.Headers.UserAgent.ToString()}");
+
 
             string jsonContent = await req.Content.ReadAsStringAsync();
             dynamic data = JsonConvert.DeserializeObject(jsonContent);
