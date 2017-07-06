@@ -71,9 +71,9 @@ namespace OrchestrationFunctions
 
         private static async Task StoreBreakdownJsonInCosmos(VideoBreakdownPOCO videoBreakdownJson)
         {
-            //string cosmos_collection_name = ConfigurationManager.AppSettings["cosmos_collection_name"];
-            //if (String.IsNullOrEmpty(cosmos_collection_name))
-            //    throw new ApplicationException("cosmos_collection_name app setting not set");
+            //string Cosmos_Collection_Name = ConfigurationManager.AppSettings["Cosmos_Collection_Name"];
+            //if (String.IsNullOrEmpty(Cosmos_Collection_Name))
+            //    throw new ApplicationException("Cosmos_Collection_Name app setting not set");
 
             var collectionName = "Breakdowns";
             var client = Globals.GetCosmosClient(collectionName);

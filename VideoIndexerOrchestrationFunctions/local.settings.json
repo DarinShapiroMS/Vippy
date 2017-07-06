@@ -3,13 +3,19 @@
   "Values": {
     "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=h7de747v4opccazfunctions;AccountKey=pdIYZTqyZeZsp2/2MD+U5u7OZtmkzgg4b+NO1d8Gxh3yvBnJoCxemdJayvzwKWdYjy6r1pU/nKr61KwL/Ngs8A==;EndpointSuffix=core.windows.net",
     "AzureWebJobsDashboard": "",
-    "video_indexer_key": "cb2980a155f0465c9cc5fed037f4596f",
-    "cosmos_enpoint": "https://cosmos-vi-api-poc.documents.azure.com:443/",
-    "cosmos_key": "z0fH5X0V0hqvAc1b8oMDCKxfeWFQ7GQe9ElhX9esvx0Gwa2fEh280EehmS2gFnxm4tGcvdfDCIbAGMO2CDSCZQ==",
-    "cosmos_database_name": "VideoBreakdowns",
-    "cosmos_collection_name": "Breakdowns",
+    "VideoIndexer_Key": "cb2980a155f0465c9cc5fed037f4596f",
+    "Cosmos_Endpoint": "https://cosmos-vi-api-poc.documents.azure.com:443/",
+    "Cosmos_Key": "z0fH5X0V0hqvAc1b8oMDCKxfeWFQ7GQe9ElhX9esvx0Gwa2fEh280EehmS2gFnxm4tGcvdfDCIbAGMO2CDSCZQ==",
+    "Cosmos_Database_Name": "VideoBreakdowns",
+    "Cosmos_Collection_Name": "Breakdowns",
     "Video_Input_Container": "video-input/{name}",
     "Video_Indexer_Callback_url": "https://vi-api-poc.azurewebsites.net/api/vicallback",
-    "ams_webhook_url": ""
+    "MediaServicesNotificationWebhookUrl": "https://vi-api-poc.azurewebsites.net/api/HttpTriggerCSharp?code=zUr3Voj/bqGYov102n2Z4ZXFmCgq0ktjCmZf1cBp5DZaQ8BwLM1sew==",
+    "MediaServicesWebhookSigningKey": "j0txf1f8msjytzvpe40nxbpxdcxtqcgxy0nt",
+    "MediaServicesAccountName": "vippy",
+    "MediaServicesAccountKey": "Ok/VxhyVkHx495Okthi83sLbxLlJOWLXwL8N56fLikQ=",
+    "MediaServicesStorageAccountName": "mediaservicesds",
+    "MediaServicesStorageAccountKey": "v57pxYPJPcDdNQKnK24lovkkhixG09tf09hbMDGlLaWHCmrMUSAHjjdyf5ZXrjKw6blmfDUDI+HtGiyoPUcOzA=="
+
   }
 }

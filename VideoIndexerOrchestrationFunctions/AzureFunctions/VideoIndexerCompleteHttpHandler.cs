@@ -23,20 +23,19 @@ namespace OrchestrationFunctions
         /// <returns></returns>
         [FunctionName("VideoIndexerCompleteHttpHandler")]
         public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "vicallback")]HttpRequestMessage req,  
-            TraceWriter log, 
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "vicallback")]HttpRequestMessage req,
+            TraceWriter log,
             [Queue("vi-processing-complete", Connection = "AzureWebJobsStorage")] IAsyncCollector<string> outputQueue
             )
         {
-            Globals.LogMessage(log,"Webhook2Queue function called");
+            Globals.LogMessage(log, "Webhook2Queue function called");
 
-            var queryParams =  req.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
-
+            var queryParams = req.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
 
             string queueJson = "";
             if (queryParams != null)
             {
-                queueJson =  JsonConvert.SerializeObject(queryParams, Formatting.Indented);
+                queueJson = JsonConvert.SerializeObject(queryParams, Formatting.Indented);
 
                 await outputQueue.AddAsync(queueJson);
 
@@ -45,7 +44,7 @@ namespace OrchestrationFunctions
                 //    Globals.LogMessage(log,$"Form variable named {keyName} found posted to httpTrigger");
                 //} 
             }
-            
+
             return req.CreateResponse(HttpStatusCode.OK, queueJson);
         }
     }

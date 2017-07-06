@@ -13,15 +13,16 @@ namespace OrchestrationFunctions
 
         // NOTE: You have to update the WebHookEndpoint and Signing Key that you wish to use in the AppSettings to match
         //       your deployed Notification_Webhook_Function. After deployment, you will have a unique endpoint. 
-        static string _webHookEndpoint = Environment.GetEnvironmentVariable("WebHookEndpoint");
-        static string _signingKey = Environment.GetEnvironmentVariable("SigningKey");
+        static string _webHookEndpoint = Environment.GetEnvironmentVariable("MediaServicesNotificationWebhookUrl");
+        static string _signingKey = Environment.GetEnvironmentVariable("MediaServicesWebhookSigningKey");
 
         [FunctionName("AMSInputBlobWatcher")]        
-        public static void Run([BlobTrigger("encoding-input/{name}", Connection = "asdf")]CloudBlockBlob inputBlob, string fileName, TraceWriter log)
+        public static void Run([BlobTrigger("encoding-input/{name}", Connection = "AzureWebJobsStorage")]CloudBlockBlob inputBlob, TraceWriter log)
         {
             //log.Info($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {inputBlob.Length} Bytes");
 
-
+            string fileName = inputBlob.Name;
+            var fakeout = MediaServicesHelper.StreamEndpointType.Classic;
             CloudMediaContext context = MediaServicesHelper.Context;
 
             IAsset newAsset = CopyBlobHelper.CreateAssetFromBlob(inputBlob, fileName, log).GetAwaiter().GetResult();
@@ -62,8 +63,16 @@ namespace OrchestrationFunctions
             }
             else
             {
-                endpoint = context.NotificationEndPoints.Create("FunctionWebHook",
-                        NotificationEndPointType.WebHook, _webHookEndpoint, keyBytes);
+                try
+                {
+                    //byte[] credential = new byte[64];
+                    endpoint = context.NotificationEndPoints.Create("FunctionWebHook",
+                                   NotificationEndPointType.WebHook, _webHookEndpoint, keyBytes);
+                }
+                catch (Exception ex)
+                {
+                    throw new ApplicationException($"The endpoing address specified - '{_webHookEndpoint}' is not valid.");
+                }
                 log.Info($"Notification Endpoint Created with Key : {keyBytes.ToString()}");
             }
 

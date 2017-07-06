@@ -22,7 +22,7 @@ namespace OrchestrationFunctions
             var client = new HttpClient();
 
             // Video Indexer API key stored in settings (App Settings in Azure Function portal)
-            string VideoIndexerKey = ConfigurationManager.AppSettings["video_indexer_key"];
+            string VideoIndexerKey = ConfigurationManager.AppSettings["VideoIndexer_Key"];
             if (String.IsNullOrEmpty(VideoIndexerKey))
                 throw new ApplicationException("VideoIndexerKey app setting not set");
 
@@ -110,13 +110,13 @@ namespace OrchestrationFunctions
         /// <returns></returns>
         private static DocumentClient GetCosmosClient()
         {
-            string endpoint = ConfigurationManager.AppSettings["cosmos_enpoint"];
+            string endpoint = ConfigurationManager.AppSettings["Cosmos_Endpoint"];
             if (String.IsNullOrEmpty(endpoint))
-                throw new ApplicationException("cosmos_enpoint app setting not set");
+                throw new ApplicationException("Cosmos_Endpoint app setting not set");
 
-            string key = ConfigurationManager.AppSettings["cosmos_key"];
+            string key = ConfigurationManager.AppSettings["Cosmos_Key"];
             if (String.IsNullOrEmpty(key))
-                throw new ApplicationException("cosmos_key app setting not set");
+                throw new ApplicationException("Cosmos_Key app setting not set");
 
             var client = new DocumentClient(new Uri(endpoint), key);
 
@@ -158,10 +158,10 @@ namespace OrchestrationFunctions
         public static string CosmosDatabasename {
             get
             {
-                string cosmos_database_name = ConfigurationManager.AppSettings["cosmos_database_name"];
-                if (String.IsNullOrEmpty(cosmos_database_name))
-                    throw new ApplicationException("cosmos_database_name app setting not set");
-                return cosmos_database_name;
+                string Cosmos_Database_Name = ConfigurationManager.AppSettings["Cosmos_Database_Name"];
+                if (String.IsNullOrEmpty(Cosmos_Database_Name))
+                    throw new ApplicationException("Cosmos_Database_Name app setting not set");
+                return Cosmos_Database_Name;
 
             }
 
