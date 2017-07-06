@@ -5,6 +5,7 @@ using Microsoft.WindowsAzure.MediaServices.Client;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System.Linq;
 using System;
+using System.Threading;
 
 namespace OrchestrationFunctions
 {
@@ -22,7 +23,7 @@ namespace OrchestrationFunctions
             //log.Info($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {inputBlob.Length} Bytes");
 
             string fileName = inputBlob.Name;
-            var fakeout = MediaServicesHelper.StreamEndpointType.Classic;
+            
             CloudMediaContext context = MediaServicesHelper.Context;
 
             IAsset newAsset = CopyBlobHelper.CreateAssetFromBlob(inputBlob, fileName, log).GetAwaiter().GetResult();
@@ -50,7 +51,8 @@ namespace OrchestrationFunctions
             task.InputAssets.Add(newAsset);
 
             // setup webhook notification
-            byte[] keyBytes = Convert.FromBase64String(_signingKey);
+            //byte[] keyBytes = Convert.FromBase64String(_signingKey);
+            byte[] keyBytes = new byte[32];
 
             // Check for existing Notification Endpoint with the name "FunctionWebHook"
             var existingEndpoint = context.NotificationEndPoints.Where(e => e.Name == "FunctionWebHook").FirstOrDefault();
@@ -82,6 +84,25 @@ namespace OrchestrationFunctions
             task.OutputAssets.AddNew(fileName, AssetCreationOptions.None);
 
             job.Submit();
+
+            while (true)
+            {
+                job.Refresh();
+                // Refresh every 5 seconds
+                Thread.Sleep(5000);
+                log.Info($"Job ID:{job.Id} State: {job.State.ToString()}");
+
+                if (job.State == JobState.Error || job.State == JobState.Finished || job.State == JobState.Canceled)
+                    break;
+            }
+
+            if (job.State == JobState.Finished)
+                log.Info($"Job {job.Id} is complete.");
+            else if (job.State == JobState.Error)
+            {
+                log.Error("Job Failed with Error. ");
+                throw new Exception("Job failed encoding .");
+            }
             Globals.LogMessage(log, $"AMS encoding job submitted for {fileName}");
 
         }

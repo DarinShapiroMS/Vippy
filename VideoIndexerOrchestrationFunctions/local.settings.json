@@ -1,7 +1,7 @@
 {
     "IsEncrypted": false,
   "Values": {
-    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=h7de747v4opccazfunctions;AccountKey=pdIYZTqyZeZsp2/2MD+U5u7OZtmkzgg4b+NO1d8Gxh3yvBnJoCxemdJayvzwKWdYjy6r1pU/nKr61KwL/Ngs8A==;EndpointSuffix=core.windows.net",
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=viapipoc9hckf5jj2twnea;AccountKey=3EO3nGRgJGSytti8q1P1qD3i34tqu6LL2+jwD3pYgj8AQRTXJ52TheLo5twZOBmIhrt+ARISAfNYKj+2YmfebQ==;EndpointSuffix=core.windows.net",
     "AzureWebJobsDashboard": "",
     "VideoIndexer_Key": "cb2980a155f0465c9cc5fed037f4596f",
     "Cosmos_Endpoint": "https://cosmos-vi-api-poc.documents.azure.com:443/",
@@ -10,12 +10,12 @@
     "Cosmos_Collection_Name": "Breakdowns",
     "Video_Input_Container": "video-input/{name}",
     "Video_Indexer_Callback_url": "https://vi-api-poc.azurewebsites.net/api/vicallback",
-    "MediaServicesNotificationWebhookUrl": "https://vi-api-poc.azurewebsites.net/api/HttpTriggerCSharp?code=zUr3Voj/bqGYov102n2Z4ZXFmCgq0ktjCmZf1cBp5DZaQ8BwLM1sew==",
-    "MediaServicesWebhookSigningKey": "j0txf1f8msjytzvpe40nxbpxdcxtqcgxy0nt",
-    "MediaServicesAccountName": "vippy",
-    "MediaServicesAccountKey": "Ok/VxhyVkHx495Okthi83sLbxLlJOWLXwL8N56fLikQ=",
-    "MediaServicesStorageAccountName": "mediaservicesds",
-    "MediaServicesStorageAccountKey": "v57pxYPJPcDdNQKnK24lovkkhixG09tf09hbMDGlLaWHCmrMUSAHjjdyf5ZXrjKw6blmfDUDI+HtGiyoPUcOzA=="
+    "MediaServicesNotificationWebhookUrl": "https://viapipoc9hckf5jj2twnea.azurewebsites.net/api/amscallback?code=EXj18yjZiTQsVnZpmbd4sve4E3bGvkCOE7zN/RPHLGGbNRsR4YTxmA==",
+    "MediaServicesWebhookSigningKey": "j0txf1f8msjytzvpe40nxbpxdcxtqcgx",
+    "MediaServicesAccountName": "viapipoc9hckf5jj2twnea",
+    "MediaServicesAccountKey": "EFEk4wJiMrfmA1C7dfa7IXMWSpkMJLIlZDfORgrK3gM=",
+    "MediaServicesStorageAccountName": "viapipoc9hckf5jj2twnea",
+    "MediaServicesStorageAccountKey": "3EO3nGRgJGSytti8q1P1qD3i34tqu6LL2+jwD3pYgj8AQRTXJ52TheLo5twZOBmIhrt+ARISAfNYKj+2YmfebQ=="
 
   }
 }
