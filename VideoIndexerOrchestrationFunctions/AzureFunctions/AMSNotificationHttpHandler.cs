@@ -17,12 +17,9 @@ namespace OrchestrationFunctions
             string jsonContent = await req.Content.ReadAsStringAsync();
             dynamic data = JsonConvert.DeserializeObject(jsonContent);
 
-            
 
-            return req.CreateResponse(HttpStatusCode.OK, new
-            {
-                greeting = $"Hello {data.first} {data.last}!"
-            });
+
+            return req.CreateResponse(HttpStatusCode.OK, jsonContent);
         }
     }
 }
