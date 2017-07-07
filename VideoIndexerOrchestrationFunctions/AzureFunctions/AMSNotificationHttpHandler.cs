@@ -18,7 +18,7 @@ namespace OrchestrationFunctions
             string jsonContent = await req.Content.ReadAsStringAsync();
             dynamic data = JsonConvert.DeserializeObject(jsonContent);
 
-
+            log.Info($"Input JSON is-{jsonContent}");
 
             return req.CreateResponse(HttpStatusCode.OK, jsonContent);
         }

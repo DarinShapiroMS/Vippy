@@ -78,6 +78,8 @@ namespace OrchestrationFunctions
                 log.Info($"Notification Endpoint Created with Key : {keyBytes.ToString()}");
             }
 
+            task.TaskNotificationSubscriptions.AddNew(NotificationJobState.FinalStatesOnly, endpoint, false);
+
             // Add an output asset to contain the results of the job. 
             // This output is specified as AssetCreationOptions.None, which 
             // means the output asset is not encrypted. 
