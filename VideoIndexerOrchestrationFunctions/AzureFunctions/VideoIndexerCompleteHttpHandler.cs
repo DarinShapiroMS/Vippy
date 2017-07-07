@@ -28,7 +28,7 @@ namespace OrchestrationFunctions
             [Queue("vi-processing-complete", Connection = "AzureWebJobsStorage")] IAsyncCollector<string> outputQueue
             )
         {
-            Globals.LogMessage(log, "Webhook2Queue function called");
+            Globals.LogMessage(log, "VideoIndexerCompleteHttpHandler function called");
 
             var queryParams = req.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
 
