@@ -40,9 +40,9 @@ namespace OrchestrationFunctions
             // processor to use for the specific task.
             IMediaProcessor processor = MediaServicesHelper.GetLatestMediaProcessorByName("Media Encoder Standard");
 
-            ITask task = job.Tasks.AddNew("ABR encoding",
+            ITask task = job.Tasks.AddNew("720p mbr encoding",
                 processor,
-                "Adaptive Streaming",
+                "Content Adaptive Multiple Bitrate MP4",
                 TaskOptions.None
                 );
 
@@ -87,24 +87,24 @@ namespace OrchestrationFunctions
 
             job.Submit();
 
-            while (true)
-            {
-                job.Refresh();
-                // Refresh every 5 seconds
-                Thread.Sleep(5000);
-                log.Info($"Job ID:{job.Id} State: {job.State.ToString()}");
+            //while (true)
+            //{
+            //    job.Refresh();
+            //    // Refresh every 5 seconds
+            //    Thread.Sleep(5000);
+            //    log.Info($"Job ID:{job.Id} State: {job.State.ToString()}");
 
-                if (job.State == JobState.Error || job.State == JobState.Finished || job.State == JobState.Canceled)
-                    break;
-            }
+            //    if (job.State == JobState.Error || job.State == JobState.Finished || job.State == JobState.Canceled)
+            //        break;
+            //}
 
-            if (job.State == JobState.Finished)
-                log.Info($"Job {job.Id} is complete.");
-            else if (job.State == JobState.Error)
-            {
-                log.Error("Job Failed with Error. ");
-                throw new Exception("Job failed encoding .");
-            }
+            //if (job.State == JobState.Finished)
+            //    log.Info($"Job {job.Id} is complete.");
+            //else if (job.State == JobState.Error)
+            //{
+            //    log.Error("Job Failed with Error. ");
+            //    throw new Exception("Job failed encoding .");
+            //}
             Globals.LogMessage(log, $"AMS encoding job submitted for {fileName}");
 
         }

@@ -24,17 +24,26 @@ namespace OrchestrationFunctions
         static string _storageAccountName = Environment.GetEnvironmentVariable("MediaServicesStorageAccountName");
         static string _storageAccountKey = Environment.GetEnvironmentVariable("MediaServicesStorageAccountKey");
 
-        private static CloudStorageAccount _amsStorageAccount = null;
-        private static CloudStorageAccount _destinationStorageAccount = null;
+        
+        private static CloudStorageAccount _amstorageAccount = null;
 
         private static CloudMediaContext _context = MediaServicesHelper.Context;
 
-        public static CloudStorageAccount AmsStorageAccount { get => _amsStorageAccount; set => _amsStorageAccount = value; }
+        public static CloudStorageAccount AmsStorageAccount { get => _amstorageAccount; set => _amstorageAccount = value; }
 
         public class AssetfileinJson
         {
             public string fileName = String.Empty;
             public bool isPrimary = false;
+        }
+
+        static CopyBlobHelper()
+        {
+            //Get a reference to the storage account that is associated with the Media Services account. 
+            StorageCredentials mediaServicesStorageCredentials =
+                new StorageCredentials(_storageAccountName, _storageAccountKey);
+            _amstorageAccount = new CloudStorageAccount(mediaServicesStorageCredentials, false);
+
         }
 
         static public CloudBlobContainer GetCloudBlobContainer(string storageAccountName, string storageAccountKey, string containerName)
@@ -187,11 +196,7 @@ namespace OrchestrationFunctions
         /// <returns>The new asset.</returns>
         public static async Task<IAsset> CreateAssetFromBlobAsync(CloudBlockBlob blob, string assetName, TraceWriter log)
         {
-            //Get a reference to the storage account that is associated with the Media Services account. 
-            StorageCredentials mediaServicesStorageCredentials =
-                new StorageCredentials(_storageAccountName, _storageAccountKey);
-            _destinationStorageAccount = new CloudStorageAccount(mediaServicesStorageCredentials, false);
-
+       
             // Create a new asset. 
             var asset = _context.Assets.Create(blob.Name, AssetCreationOptions.None);
             log.Info($"Created new asset {asset.Name}");
@@ -199,7 +204,7 @@ namespace OrchestrationFunctions
             IAccessPolicy writePolicy = _context.AccessPolicies.Create("writePolicy",
                 TimeSpan.FromHours(4), AccessPermissions.Write);
             ILocator destinationLocator = _context.Locators.CreateLocator(LocatorType.Sas, asset, writePolicy);
-            CloudBlobClient destBlobStorage = _destinationStorageAccount.CreateCloudBlobClient();
+            CloudBlobClient destBlobStorage = _amstorageAccount.CreateCloudBlobClient();
 
             // Get the destination asset container reference
             string destinationContainerName = (new Uri(destinationLocator.Path)).Segments[1];
@@ -285,7 +290,7 @@ namespace OrchestrationFunctions
             //Get a reference to the storage account that is associated with the Media Services account. 
             StorageCredentials mediaServicesStorageCredentials =
                 new StorageCredentials(_storageAccountName, _storageAccountKey);
-            _destinationStorageAccount = new CloudStorageAccount(mediaServicesStorageCredentials, false);
+            _amstorageAccount = new CloudStorageAccount(mediaServicesStorageCredentials, false);
 
             // Create a new asset. 
             var asset = _context.Assets.Create(Path.GetFileNameWithoutExtension(blob.Name), AssetCreationOptions.None);
@@ -294,7 +299,7 @@ namespace OrchestrationFunctions
             IAccessPolicy writePolicy = _context.AccessPolicies.Create("writePolicy",
                 TimeSpan.FromHours(4), AccessPermissions.Write);
             ILocator destinationLocator = _context.Locators.CreateLocator(LocatorType.Sas, asset, writePolicy);
-            CloudBlobClient destBlobStorage = _destinationStorageAccount.CreateCloudBlobClient();
+            CloudBlobClient destBlobStorage = _amstorageAccount.CreateCloudBlobClient();
 
             // Get the destination asset container reference
             string destinationContainerName = (new Uri(destinationLocator.Path)).Segments[1];

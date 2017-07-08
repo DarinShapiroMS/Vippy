@@ -30,7 +30,7 @@ namespace OrchestrationFunctions
         {
            
             NotificationMessage msg = JsonConvert.DeserializeObject<NotificationMessage>(myQueueItem);
-            if (msg.EventType != NotificationEventType.JobStateChange)
+            if (msg.EventType != NotificationEventType.TaskStateChange)
                 return; // ignore anything but job complete 
 
             //TODO: get SAS reference for one of the output renditions
@@ -49,17 +49,37 @@ namespace OrchestrationFunctions
                 var inputAsset = task.InputAssets[0];
                 var inputAssetId = inputAsset.Id;
 
+                var inputFileCOunt = inputAsset.AssetFiles.Count();
 
                 IAccessPolicy readPolicy = _context.AccessPolicies.Create("readPolicy",TimeSpan.FromHours(4), AccessPermissions.Read);
                 ILocator outputLocator = _context.Locators.CreateLocator(LocatorType.Sas, outputAsset, readPolicy);
 
-                //TODO: need a sas locator for the top bitrate rendition in the outputfiles
+                CloudBlobClient destBlobStorage = CopyBlobHelper.AmsStorageAccount.CreateCloudBlobClient();
+
+
+
+                // Get the asset container reference
+                string outContainerName = (new Uri(outputLocator.Path)).Segments[1];
+                CloudBlobContainer outContainer = destBlobStorage.GetContainerReference(outContainerName);
+
+                log.Info($"Getting Output Blob from : {outContainer.Name}");
+
+                //CloudBlockBlob jobInput = null;
+
+                // Get the largest single mp4 output
+                var biggestblob = outContainer.ListBlobs().OfType<CloudBlockBlob>()
+                            .Where(b => b.Name.ToLower().EndsWith(".mp4"))
+                            .OrderBy(u=>u.Properties.Length).Last();
+
+
+
+
+                string SAS = Globals.GetSasUrl(biggestblob);
+
 
                 // Submit processing job to Video Indexer
-                string fileName = ""; // get this from AMS
-                string SAS = "";
-
-                await Globals.SubmitToVideoIndexerAsync(fileName, SAS);
+                
+                await Globals.SubmitToVideoIndexerAsync(biggestblob.Name, SAS);
             }
 
 

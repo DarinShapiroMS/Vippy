@@ -33,6 +33,20 @@ namespace OrchestrationFunctions
   }
 }
 
+Registration JSON message
+{
+  "MessageVersion": "1.0",
+  "ETag": "66d7a15b3291eb84d6864aff4a39d421d9b29332bd01cde845b3391a1994e399",
+  "EventType": 2,
+  "TimeStamp": "2017-07-07T00:57:35.5576705Z",
+  "Properties": {
+    "NotificationEndPointId": "nb:nepid:UUID:6dc80709-70f6-490a-9634-5c8acb810440",
+    "State": "Registered",
+    "Name": "FunctionWebHook",
+    "Created": "2017-07-07T00:57:35",
+    "AccountId": "4f15b61c-c731-4295-a5d7-7993bd938ab5"
+  }
+
              * 
              */
 
@@ -43,7 +57,7 @@ namespace OrchestrationFunctions
             await outputQueue.AddAsync(jsonContent);
             //dynamic data = JsonConvert.DeserializeObject(jsonContent);
 
-            log.Info($"Input JSON is-{jsonContent}");
+            //log.Info($"Input JSON is-{jsonContent}");
 
             return req.CreateResponse(HttpStatusCode.OK);
         }

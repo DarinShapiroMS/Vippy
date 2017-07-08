@@ -1,6 +1,7 @@
 ﻿using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.WebJobs.Host;
+using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
 using System;
 using System.Configuration;
@@ -16,7 +17,25 @@ namespace OrchestrationFunctions
     {
         public static readonly string VideoIndexerApiUrl = "https://videobreakdown.azure-api.net/Breakdowns/Api/Partner/Breakdowns";
 
+        public static  CloudBlobContainer VideoIndexerResourcesContainer { get; set; }
 
+
+        static Globals()
+        {
+            // initialize VI resources container
+            var amsStorageClient = CopyBlobHelper.AmsStorageAccount.CreateCloudBlobClient();
+            var imageContainer = amsStorageClient.GetContainerReference("video-indexer-resources");
+
+            if (imageContainer.CreateIfNotExists())
+            {
+                // configure container for public access
+                var permissions = imageContainer.GetPermissions();
+                permissions.PublicAccess = BlobContainerPublicAccessType.Container;
+                imageContainer.SetPermissions(permissions);
+            }
+            VideoIndexerResourcesContainer = imageContainer;
+
+        }
         public static HttpClient GetVideoIndexerHttpClient()
         {
             var client = new HttpClient();
@@ -173,6 +192,29 @@ namespace OrchestrationFunctions
                 return "VIProcessingState";
             }
             set { }
+        }
+
+       
+
+        /// <summary>
+        /// Gets a URL with a SAS token that is good to read the file for 1 hour
+        /// </summary>
+        /// <param name="myBlob"></param>
+        /// <returns></returns>
+        public static string GetSasUrl(CloudBlockBlob myBlob)
+        {
+            // expiry time set 5 minutes in the past to 1 hour in the future. THis can be
+            // moved into configuration if needed
+            SharedAccessBlobPolicy sasConstraints = new SharedAccessBlobPolicy
+            {
+                SharedAccessStartTime = DateTimeOffset.UtcNow.AddMinutes(-5),
+                SharedAccessExpiryTime = DateTimeOffset.UtcNow.AddHours(1),
+                Permissions = SharedAccessBlobPermissions.Read
+            };
+
+            //Generate the shared access signature on the blob, setting the constraints directly on the signature.
+            string sasBlobToken = myBlob.GetSharedAccessSignature(sasConstraints);
+            return myBlob.Uri + sasBlobToken;
         }
 
         /// <summary>
