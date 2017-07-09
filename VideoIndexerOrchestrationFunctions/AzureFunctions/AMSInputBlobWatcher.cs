@@ -60,7 +60,7 @@ namespace OrchestrationFunctions
 
             if (existingEndpoint != null)
             {
-                log.Info("webhook endpoint already exists");
+                
                 endpoint = (INotificationEndPoint)existingEndpoint;
             }
             else
@@ -75,7 +75,7 @@ namespace OrchestrationFunctions
                 {
                     throw new ApplicationException($"The endpoing address specified - '{_webHookEndpoint}' is not valid.");
                 }
-                log.Info($"Notification Endpoint Created with Key : {keyBytes.ToString()}");
+                
             }
 
             task.TaskNotificationSubscriptions.AddNew(NotificationJobState.FinalStatesOnly, endpoint, false);

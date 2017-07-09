@@ -68,7 +68,7 @@ namespace OrchestrationFunctions
             var blobList = sourceBlobContainer.ListBlobs(blobPrefix, useFlatBlobListing, BlobListingDetails.None);
             foreach (var sourceBlob in blobList)
             {
-                log.Info("Source blob : " + (sourceBlob as CloudBlob).Uri.ToString());
+                //log.Info("Source blob : " + (sourceBlob as CloudBlob).Uri.ToString());
                 CloudBlob destinationBlob = destinationBlobContainer.GetBlockBlobReference((sourceBlob as CloudBlob).Name);
                 if (destinationBlob.Exists())
                 {
@@ -76,7 +76,7 @@ namespace OrchestrationFunctions
                 }
                 else
                 {
-                    log.Info("Copying blob " + sourceBlob.Uri.ToString() + " to " + destinationBlob.Uri.ToString());
+                   // log.Info("Copying blob " + sourceBlob.Uri.ToString() + " to " + destinationBlob.Uri.ToString());
                     CopyBlobAsync(sourceBlob as CloudBlob, destinationBlob);
                 }
             }
@@ -124,10 +124,10 @@ namespace OrchestrationFunctions
             {
                 foreach (var blob in sourceContainer.ListBlobs(String.Empty, true, BlobListingDetails.None, null, null))
                 {
-                    log.Info($"Blob URI: {blob.Uri}");
+                    //log.Info($"Blob URI: {blob.Uri}");
                     if (blob is CloudBlockBlob sourceBlob)
                     {
-                        log.Info($"Blob Name: {sourceBlob.Name}");
+                        //log.Info($"Blob Name: {sourceBlob.Name}");
                         CloudBlockBlob targetBlob = targetContainer.GetBlockBlobReference(sourceBlob.Name);
 
                         using (var stream = await sourceBlob.OpenReadAsync())
@@ -135,7 +135,7 @@ namespace OrchestrationFunctions
                             await targetBlob.UploadFromStreamAsync(stream);
                         }
 
-                        log.Info($"Copied: {sourceBlob.Name}");
+                        //log.Info($"Copied: {sourceBlob.Name}");
                     }
                 }
             }
@@ -177,7 +177,7 @@ namespace OrchestrationFunctions
             {
                 Task<IAsset> copyAssetTask = CreateAssetFromBlobAsync(blob, assetName, log);
                 newAsset = await copyAssetTask;
-                log.Info($"Asset Copied : {newAsset.Id}");
+                //log.Info($"Asset Copied : {newAsset.Id}");
             }
             catch (Exception ex)
             {
@@ -199,7 +199,7 @@ namespace OrchestrationFunctions
        
             // Create a new asset. 
             var asset = _context.Assets.Create(blob.Name, AssetCreationOptions.None);
-            log.Info($"Created new asset {asset.Name}");
+            //log.Info($"Created new asset {asset.Name}");
 
             IAccessPolicy writePolicy = _context.AccessPolicies.Create("writePolicy",
                 TimeSpan.FromHours(4), AccessPermissions.Write);
@@ -219,7 +219,7 @@ namespace OrchestrationFunctions
                 log.Error("ERROR:" + ex.Message);
             }
 
-            log.Info("Created asset.");
+            //log.Info("Created asset.");
 
             // Get hold of the destination blob
             CloudBlockBlob destinationBlob = assetContainer.GetBlockBlobReference(blob.Name);
@@ -232,7 +232,7 @@ namespace OrchestrationFunctions
                     await destinationBlob.UploadFromStreamAsync(stream);
                 }
 
-                log.Info("Copy Complete.");
+                //log.Info("Copy Complete.");
 
                 var assetFile = asset.AssetFiles.Create(blob.Name);
                 assetFile.ContentFileSize = blob.Properties.Length;
@@ -264,7 +264,7 @@ namespace OrchestrationFunctions
             {
                 Task<IAsset> copyAssetTask = CreateAssetFromBlobMultipleFilesAsync(blob, assetName, log, assetfilesAsset);
                 newAsset = await copyAssetTask;
-                log.Info($"Asset Copied : {newAsset.Id}");
+                //log.Info($"Asset Copied : {newAsset.Id}");
             }
             catch (Exception ex)
             {
@@ -294,7 +294,7 @@ namespace OrchestrationFunctions
 
             // Create a new asset. 
             var asset = _context.Assets.Create(Path.GetFileNameWithoutExtension(blob.Name), AssetCreationOptions.None);
-            log.Info($"Created new asset {asset.Name}");
+            //log.Info($"Created new asset {asset.Name}");
 
             IAccessPolicy writePolicy = _context.AccessPolicies.Create("writePolicy",
                 TimeSpan.FromHours(4), AccessPermissions.Write);
@@ -314,7 +314,7 @@ namespace OrchestrationFunctions
                 log.Error("ERROR:" + ex.Message);
             }
 
-            log.Info("Created asset.");
+            //log.Info("Created asset.");
 
             var sourceBlobContainer = blob.Container;
 
@@ -348,7 +348,7 @@ namespace OrchestrationFunctions
                         await destinationBlob.UploadFromStreamAsync(stream);
                     }
 
-                    log.Info("Copy Complete.");
+                    //log.Info("Copy Complete.");
 
                     var assetFile = asset.AssetFiles.Create(sourceBlob.Name);
                     assetFile.ContentFileSize = sourceBlob.Properties.Length;
