@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "repoUrl": {
+      "value": "https://github.com/DarinShapiroMS/Vippy"
+    },
+    "branch": {
+      "value": "master"
+    },
+
+    "Cosmos_Database_name": {
+      "value": "videobreakdowncosmos"
+    },
+    "AppName": {
+      "value": "VI-API-POC9"
+    }
+
+  }
+}

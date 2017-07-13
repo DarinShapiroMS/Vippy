@@ -1,282 +1,336 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "sourceCodeRepositoryURL":{
-            "type" : "String"
-        },
-        "sourceCodeBranch" : {
-            "type" : "String"
-        },
-        "Cosmos_Account_name": {
-            "defaultValue": "cosmos-vi-api-poc",
-            "type": "String",
-            "minLength": 3,
-            "maxLength": 50
-        },
-        "Cosmos_Database_name": {
-            "defaultValue": "videobreakdowncosmos",
-            "type": "String"
-        },
-        "FunctionApp_name": {
-            "defaultValue": "VI-API-POC2",
-            "type": "String"
-        }
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "repoUrl": {
+      "type": "string"
     },
-    "variables": {
-        "Serviceplan_name": "[concat(parameters('FunctionApp_name'), 'plan')]",
-        "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'azfunctions')]",
-        "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
+    "branch": {
+      "type": "string"
     },
-    "resources": [
-         {
-          "type": "sourcecontrols",
-          "name": "web",
+
+    "Cosmos_Database_name": {
+      "defaultValue": "videobreakdowncosmos",
+      "type": "string"
+    },
+    "AppName": {
+      "defaultValue": "VI-API-POC2",
+      "type": "string",
+      "maxLength": 12,
+      "minLength" : 3,
+      "metadata": {
+        "description": "The name to be used for the various services involved, such as Azure Search, Azure Functions, etc. \r\nmust only contain lowercase letters, digits or dashes, cannot use dash as the first two or last one characters, cannot contain consecutive dashes, and is limited between 3 and 12 characters in length."
+      }
+    }
+  },
+  "variables": {
+    "uniqueAppName": "[replace(toLower(concat(parameters('AppName'), uniqueString(resourceGroup().id))), '-','')]",
+    "uniqueResourcePrefix": "[uniqueString(resourceGroup().id)]",
+    "Serviceplan_name": "[concat(variables('uniqueAppName'), 'plan')]",
+    "mediaServicesAccountName": "[variables('uniqueAppName')]",
+    "storageAccountName": "[variables('uniqueAppName')]",
+    "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
+  },
+  "resources": [
+
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "kind": "GlobalDocumentDB",
+      "name": "[variables('uniqueAppName')]",
+      "apiVersion": "2015-04-08",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "defaultExperience": "DocumentDB"
+      },
+      "properties": {
+        "databaseAccountOfferType": "Standard",
+        "consistencyPolicy": {
+          "defaultConsistencyLevel": "Session",
+          "maxIntervalInSeconds": 5,
+          "maxStalenessPrefix": 100
+        },
+        "name": "[parameters('Cosmos_Database_name')]"
+      },
+      "dependsOn": []
+    },
+    {
+      "comments": "Azure Search Service",
+      "type": "Microsoft.Search/searchServices",
+      "sku": {
+        "name": "free"
+      },
+      "name": "[toLower(parameters('AppName'))]",
+      "apiVersion": "2015-08-19",
+      "location": "[resourceGroup().location]",
+      "scale": null,
+      "properties": {
+        "replicaCount": 1,
+        "partitionCount": 1,
+        "hostingMode": "Default"
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "sku": {
+        "name": "Standard_LRS",
+        "tier": "Standard"
+      },
+      "kind": "Storage",
+      "name": "[variables('storageAccountName')]",
+      "apiVersion": "2016-01-01",
+      "location": "[resourceGroup().location]",
+      "tags": {},
+      "properties": {},
+      "dependsOn": []
+    },
+    {
+      "comments": "Media Services Account",
+      "type": "Microsoft.Media/mediaServices",
+      "name": "[variables('mediaServicesAccountName')]",
+      "apiVersion": "2015-10-01",
+      "location": "[resourceGroup().location]",
+      "scale": null,
+      "properties": {
+        "storageAccounts": [
+          {
+            "id": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+            "isPrimary": true
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "sku": {
+        "name": "Y1",
+        "tier": "Dynamic",
+        "size": "Y1",
+        "family": "Y",
+        "capacity": 0
+      },
+      "kind": "functionapp",
+      "name": "[variables('Serviceplan_name')]",
+      "apiVersion": "2015-08-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "name": "[variables('Serviceplan_name')]",
+        "numberOfWorkers": 0
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "kind": "functionApp",
+      "name": "[variables('uniqueAppName')]",
+      "apiVersion": "2015-08-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "hidden-related:/subscriptions/3af88148-8e0f-4788-804d-a2367b181169/resourceGroups/EnlacePOC/providers/Microsoft.Web/serverfarms/VI-API-POCPlan": "empty"
+      },
+      "properties": {
+        "name": "[variables('uniqueAppName')]",
+        "hostNames": [
+          "[concat(variables('uniqueAppName'),'.azurewebsites.net')]"
+        ],
+        "enabledHostNames": [
+          "[concat(variables('uniqueAppName'),'.azurewebsites.net')]",
+          "[concat(variables('uniqueAppName'),'.scm.azurewebsites.net')]"
+        ],
+        "hostNameSslStates": [
+          {
+            "name": "[concat(variables('uniqueAppName'),'.azurewebsites.net')]",
+            "sslState": 0,
+            "thumbprint": null,
+            "ipBasedSslState": 0
+          },
+          {
+            "name": "[concat(variables('uniqueAppName'),'.scm.azurewebsites.net')]",
+            "sslState": 0,
+            "thumbprint": null,
+            "ipBasedSslState": 0
+          }
+        ],
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('Serviceplan_name'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('Serviceplan_name'))]"
+      ],
+      "resources": [
+        {
+          "name": "appsettings",
+          "type": "config",
           "apiVersion": "2015-08-01",
-          "comments": "This section sets up source control for continuous integration on the Function app and pulls the source code down from Github.",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites/', parameters('FunctionApp_name'))]",
-            "[concat(resourceId('Microsoft.Web/sites/', parameters('FunctionApp_name')),'/config/appsettings')]"
+            "[resourceId('Microsoft.Web/sites', variables('uniqueAppName'))]",
+            "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+            "[concat('Microsoft.DocumentDb/databaseAccounts/', variables('uniqueAppName'))]",
+            "[resourceId('Microsoft.Media/mediaServices', variables('mediaServicesAccountName'))]"
+
           ],
+          "tags": {
+            "displayName": "FunctionAppSettings"
+          },
           "properties": {
-            "RepoUrl": "[parameters('sourceCodeRepositoryURL')]",
-            "branch": "[parameters('sourceCodeBranch')]",
-            "IsManualIntegration": "false"
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+            "FUNCTIONS_EXTENSION_VERSION": "~1",
+            "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+            "WEBSITE_CONTENTSHARE": "[toLower(variables('uniqueAppName'))]",
+            "VideoIndexer_Key": "GetKeyFromVideoIndexer",
+            "Video_Indexer_Callback_url": "[concat('https://', concat(variables('uniqueAppName'), '.azurewebsites.net'), '/api/vicallback')]",
+            "Video_Input_Container": "video-input/{name}",
+            "Cosmos_Endpoint": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('uniqueAppName'))).documentEndpoint]",
+            "Cosmos_Key": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', variables('uniqueAppName')), '2015-04-08').primaryMasterKey]",
+            "Cosmos_Database_Name": "VideoBreakdowns",
+            "Cosmos_Collection_Name": "Breakdowns",
+            "MediaServicesAccountName": "[variables('mediaServicesAccountName')]",
+            "MediaServicesAccountKey": "[listKeys(resourceId('Microsoft.Media/mediaServices', variables('mediaServicesAccountName')), '2015-10-01').primaryKey]",
+            "MediaServicesStorageAccountName": "[variables('storageAccountName')]",
+            "MediaServicesStorageAccountKey": "[listKeys(variables('storageAccountid'),'2015-05-01-preview').key1]",
+            "MediaServicesNotificationWebhookUrl": "GetFunctionUrlFromPortal",
+            "MediaServicesWebhookSigningKey": "j0txf1f8msjytzvpe40nxbpxdcxtqcgxy0nt",
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "7a0b6ef5-27d2-48a5-95d4-284b2b960347"
           }
         },
-        {
-            "type": "Microsoft.DocumentDB/databaseAccounts",
-            "kind": "GlobalDocumentDB",
-            "name": "[parameters('Cosmos_Account_name')]",
-            "apiVersion": "2015-04-08",
-            "location": "South Central US",
-            "tags": {
-                "defaultExperience": "DocumentDB"
-            },
-            "properties": {
-                "databaseAccountOfferType": "Standard",
-                "consistencyPolicy": {
-                    "defaultConsistencyLevel": "Session",
-                    "maxIntervalInSeconds": 5,
-                    "maxStalenessPrefix": 100
-                },
-                "name": "[parameters('Cosmos_Database_name')]"
-            },
-            "dependsOn": []
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "sku": {
-                "name": "Standard_LRS",
-                "tier": "Standard"
-            },
-            "kind": "Storage",
-            "name": "[variables('storageAccountName')]",
-            "apiVersion": "2016-01-01",
-            "location": "southcentralus",
-            "tags": {},
-            "properties": {},
-            "dependsOn": []
-        },
-        {
-            "type": "Microsoft.Web/serverfarms",
-            "sku": {
-                "name": "Y1",
-                "tier": "Dynamic",
-                "size": "Y1",
-                "family": "Y",
-                "capacity": 0
-            },
-            "kind": "functionapp",
-            "name": "[variables('Serviceplan_name')]",
+    
+          {
             "apiVersion": "2015-08-01",
-            "location": "South Central US",
-            "properties": {
-                "name": "[variables('Serviceplan_name')]",
-                "numberOfWorkers": 0
-            },
-            "dependsOn": []
-        },
-        {
-            "type": "Microsoft.Web/sites",
-            "kind": "functionApp",
-            "name": "[parameters('FunctionApp_name')]",
-            "apiVersion": "2015-08-01",
-            "location": "South Central US",
-            "tags": {
-                "hidden-related:/subscriptions/3af88148-8e0f-4788-804d-a2367b181169/resourceGroups/EnlacePOC/providers/Microsoft.Web/serverfarms/VI-API-POCPlan": "empty"
-            },
-            "properties": {
-                "name": "[parameters('FunctionApp_name')]",
-                "hostNames": [
-                    "[concat(parameters('FunctionApp_name'),'.azurewebsites.net')]"
-                ],
-                "enabledHostNames": [
-                    "[concat(parameters('FunctionApp_name'),'.azurewebsites.net')]",
-                    "[concat(parameters('FunctionApp_name'),'.scm.azurewebsites.net')]"
-                ],
-                "hostNameSslStates": [
-                    {
-                        "name": "[concat(parameters('FunctionApp_name'),'.azurewebsites.net')]",
-                        "sslState": 0,
-                        "thumbprint": null,
-                        "ipBasedSslState": 0
-                    },
-                    {
-                        "name": "[concat(parameters('FunctionApp_name'),'.scm.azurewebsites.net')]",
-                        "sslState": 0,
-                        "thumbprint": null,
-                        "ipBasedSslState": 0
-                    }
-                ],
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('Serviceplan_name'))]"
-            },
+            "name": "web",
+            "type": "sourcecontrols",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', variables('Serviceplan_name'))]"
+              "[resourceId('Microsoft.Web/Sites', variables('uniqueAppName'))]"
             ],
-            "resources": [
-                {
-                    "name": "appsettings",
-                    "type": "config",
-                    "apiVersion": "2015-08-01",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Web/sites', parameters('FunctionApp_name'))]",
-                        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
-                        "[concat('Microsoft.DocumentDb/databaseAccounts/', parameters('Cosmos_Account_name'))]"
-                    ],
-                    "tags": {
-                        "displayName": "FunctionAppSettings"
-                    },
-                    "properties": {
-                        "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
-                        "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
-                        "FUNCTIONS_EXTENSION_VERSION": "~1",
-                        "video_indexer_key": "setthisvalue",
-                        "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
-                        "WEBSITE_CONTENTSHARE": "[toLower(parameters('FunctionApp_name'))]",
-                        "cosmos_enpoint": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('Cosmos_Account_name'))).documentEndpoint]",
-                        "cosmos_key": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('Cosmos_Account_name')), '2015-04-08').primaryMasterKey]"
-                    }
-                }
-            ]
-        },
-        {
-            "type": "Microsoft.Web/sites/config",
-            "name": "[concat(parameters('FunctionApp_name'), '/web')]",
-            "apiVersion": "2015-08-01",
-            "location": "South Central US",
-            "tags": {
-                "hidden-related:/subscriptions/3af88148-8e0f-4788-804d-a2367b181169/resourceGroups/EnlacePOC/providers/Microsoft.Web/serverfarms/VI-API-POCPlan": "empty"
-            },
             "properties": {
-                "numberOfWorkers": 1,
-                "defaultDocuments": [
-                    "Default.htm",
-                    "Default.html",
-                    "Default.asp",
-                    "index.htm",
-                    "index.html",
-                    "iisstart.htm",
-                    "default.aspx",
-                    "index.php",
-                    "hostingstart.html"
-                ],
-                "netFrameworkVersion": "v4.0",
-                "phpVersion": "5.6",
-                "pythonVersion": "",
-                "nodeVersion": "",
-                "linuxFxVersion": "",
-                "requestTracingEnabled": false,
-                "remoteDebuggingEnabled": false,
-                "remoteDebuggingVersion": "VS2012",
-                "httpLoggingEnabled": false,
-                "logsDirectorySizeLimit": 35,
-                "detailedErrorLoggingEnabled": false,
-                "publishingUsername": "$VI-API-POC",
-                "publishingPassword": null,
-                "appSettings": null,
-                "metadata": null,
-                "connectionStrings": null,
-                "machineKey": null,
-                "handlerMappings": null,
-                "documentRoot": null,
-                "scmType": "None",
-                "use32BitWorkerProcess": true,
-                "webSocketsEnabled": false,
-                "alwaysOn": false,
-                "javaVersion": null,
-                "javaContainer": null,
-                "javaContainerVersion": null,
-                "appCommandLine": "",
-                "managedPipelineMode": 0,
-                "virtualApplications": [
-                    {
-                        "virtualPath": "/",
-                        "physicalPath": "site\\wwwroot",
-                        "preloadEnabled": false,
-                        "virtualDirectories": null
-                    }
-                ],
-                "winAuthAdminState": 0,
-                "winAuthTenantState": 0,
-                "customAppPoolIdentityAdminState": false,
-                "customAppPoolIdentityTenantState": false,
-                "runtimeADUser": null,
-                "runtimeADUserPassword": null,
-                "loadBalancing": 1,
-                "routingRules": [],
-                "experiments": {
-                    "rampUpRules": []
-                },
-                "limits": null,
-                "autoHealEnabled": false,
-                "autoHealRules": {
-                    "triggers": null,
-                    "actions": null
-                },
-                "tracingOptions": null,
-                "vnetName": "",
-                "siteAuthEnabled": false,
-                "siteAuthSettings": {
-                    "enabled": null,
-                    "unauthenticatedClientAction": null,
-                    "tokenStoreEnabled": null,
-                    "allowedExternalRedirectUrls": null,
-                    "defaultProvider": null,
-                    "clientId": null,
-                    "clientSecret": null,
-                    "issuer": null,
-                    "allowedAudiences": null,
-                    "additionalLoginParams": null,
-                    "isAadAutoProvisioned": false,
-                    "googleClientId": null,
-                    "googleClientSecret": null,
-                    "googleOAuthScopes": null,
-                    "facebookAppId": null,
-                    "facebookAppSecret": null,
-                    "facebookOAuthScopes": null,
-                    "twitterConsumerKey": null,
-                    "twitterConsumerSecret": null,
-                    "microsoftAccountClientId": null,
-                    "microsoftAccountClientSecret": null,
-                    "microsoftAccountOAuthScopes": null
-                },
-                "cors": {
-                    "allowedOrigins": [
-                        "https://functions.azure.com",
-                        "https://functions-staging.azure.com",
-                        "https://functions-next.azure.com"
-                    ]
-                },
-                "push": null,
-                "apiDefinition": null,
-                "autoSwapSlotName": null,
-                "localMySqlEnabled": false,
-                "ipSecurityRestrictions": null
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('FunctionApp_name'))]"
-            ]
-        }
-    ]
+              "RepoUrl": "[parameters('repoURL')]",
+              "branch": "[parameters('branch')]",
+              "isManualIntegration": false
+            }
+          }
+        
+
+      ]
+    },
+    {
+      "type": "Microsoft.Web/sites/config",
+      "name": "[concat(variables('uniqueAppName'), '/web')]",
+      "apiVersion": "2015-08-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "hidden-related:/subscriptions/3af88148-8e0f-4788-804d-a2367b181169/resourceGroups/EnlacePOC/providers/Microsoft.Web/serverfarms/VI-API-POCPlan": "empty"
+      },
+      "properties": {
+        "numberOfWorkers": 1,
+        "defaultDocuments": [
+          "Default.htm",
+          "Default.html",
+          "Default.asp",
+          "index.htm",
+          "index.html",
+          "iisstart.htm",
+          "default.aspx",
+          "index.php",
+          "hostingstart.html"
+        ],
+        "netFrameworkVersion": "v4.0",
+        "phpVersion": "5.6",
+        "pythonVersion": "",
+        "nodeVersion": "",
+        "linuxFxVersion": "",
+        "requestTracingEnabled": false,
+        "remoteDebuggingEnabled": false,
+        "remoteDebuggingVersion": "VS2012",
+        "httpLoggingEnabled": false,
+        "logsDirectorySizeLimit": 35,
+        "detailedErrorLoggingEnabled": false,
+        "publishingUsername": "$VI-API-POC",
+        "publishingPassword": null,
+        "appSettings": null,
+        "metadata": null,
+        "connectionStrings": null,
+        "machineKey": null,
+        "handlerMappings": null,
+        "documentRoot": null,
+        "scmType": "None",
+        "use32BitWorkerProcess": true,
+        "webSocketsEnabled": false,
+        "alwaysOn": false,
+        "javaVersion": null,
+        "javaContainer": null,
+        "javaContainerVersion": null,
+        "appCommandLine": "",
+        "managedPipelineMode": 0,
+        "virtualApplications": [
+          {
+            "virtualPath": "/",
+            "physicalPath": "site\\wwwroot",
+            "preloadEnabled": false,
+            "virtualDirectories": null
+          }
+        ],
+        "winAuthAdminState": 0,
+        "winAuthTenantState": 0,
+        "customAppPoolIdentityAdminState": false,
+        "customAppPoolIdentityTenantState": false,
+        "runtimeADUser": null,
+        "runtimeADUserPassword": null,
+        "loadBalancing": 1,
+        "routingRules": [],
+        "experiments": {
+          "rampUpRules": []
+        },
+        "limits": null,
+        "autoHealEnabled": false,
+        "autoHealRules": {
+          "triggers": null,
+          "actions": null
+        },
+        "tracingOptions": null,
+        "vnetName": "",
+        "siteAuthEnabled": false,
+        "siteAuthSettings": {
+          "enabled": null,
+          "unauthenticatedClientAction": null,
+          "tokenStoreEnabled": null,
+          "allowedExternalRedirectUrls": null,
+          "defaultProvider": null,
+          "clientId": null,
+          "clientSecret": null,
+          "issuer": null,
+          "allowedAudiences": null,
+          "additionalLoginParams": null,
+          "isAadAutoProvisioned": false,
+          "googleClientId": null,
+          "googleClientSecret": null,
+          "googleOAuthScopes": null,
+          "facebookAppId": null,
+          "facebookAppSecret": null,
+          "facebookOAuthScopes": null,
+          "twitterConsumerKey": null,
+          "twitterConsumerSecret": null,
+          "microsoftAccountClientId": null,
+          "microsoftAccountClientSecret": null,
+          "microsoftAccountOAuthScopes": null
+        },
+        "cors": {
+          "allowedOrigins": [
+            "https://functions.azure.com",
+            "https://functions-staging.azure.com",
+            "https://functions-next.azure.com"
+          ]
+        },
+        "push": null,
+        "apiDefinition": null,
+        "autoSwapSlotName": null,
+        "localMySqlEnabled": false,
+        "ipSecurityRestrictions": null
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('uniqueAppName'))]"
+      ]
+    }
+  ]
 }

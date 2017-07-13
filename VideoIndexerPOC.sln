@@ -1,20 +1,24 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26510.0
+VisualStudioVersion = 15.0.26621.2
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubmitToVideoIndexer", "SubmitToVideoIndexer\SubmitToVideoIndexer.csproj", "{1DB5BC8B-452F-4BBD-96F2-BE6E9C015ADA}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9E619FD0-9258-428C-A0C4-1F86F7658846}"
 	ProjectSection(SolutionItems) = preProject
 		azuredeploy.json = azuredeploy.json
+		..\..\..\..\Downloads\VippyPOCTemplate\parameters.json = ..\..\..\..\Downloads\VippyPOCTemplate\parameters.json
 		SampleBreakdown.json = SampleBreakdown.json
+		..\..\..\..\OneDrive - Microsoft\Customers\Enlace\Slide1.gif = ..\..\..\..\OneDrive - Microsoft\Customers\Enlace\Slide1.gif
+		..\..\..\..\OneDrive - Microsoft\Customers\Enlace\Slide2.gif = ..\..\..\..\OneDrive - Microsoft\Customers\Enlace\Slide2.gif
+		..\..\..\..\Downloads\VippyPOCTemplate\template.json = ..\..\..\..\Downloads\VippyPOCTemplate\template.json
 	EndProjectSection
 	ProjectSection(FolderGlobals) = preProject
 		__JSONSchema = http://json.schemastore.org/commands
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrchestrationFunctions", "BreakdownFromBlobs\OrchestrationFunctions.csproj", "{B30E65E7-7E73-412F-AB8F-32ADDB3DA99C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrchestrationFunctions", "VideoIndexerOrchestrationFunctions\OrchestrationFunctions.csproj", "{B41BFF65-9BAA-4E53-B199-3F7563AB46E5}"
+EndProject
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "VideoIndexerPOCDeployTemplates", "VideoIndexerPOCDeployTemplates\VideoIndexerPOCDeployTemplates.deployproj", "{565DDE41-CA46-4369-86CF-D9281B8BDC54}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,19 +26,20 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1DB5BC8B-452F-4BBD-96F2-BE6E9C015ADA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1DB5BC8B-452F-4BBD-96F2-BE6E9C015ADA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1DB5BC8B-452F-4BBD-96F2-BE6E9C015ADA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1DB5BC8B-452F-4BBD-96F2-BE6E9C015ADA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B30E65E7-7E73-412F-AB8F-32ADDB3DA99C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B30E65E7-7E73-412F-AB8F-32ADDB3DA99C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B30E65E7-7E73-412F-AB8F-32ADDB3DA99C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B30E65E7-7E73-412F-AB8F-32ADDB3DA99C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B41BFF65-9BAA-4E53-B199-3F7563AB46E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B41BFF65-9BAA-4E53-B199-3F7563AB46E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B41BFF65-9BAA-4E53-B199-3F7563AB46E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B41BFF65-9BAA-4E53-B199-3F7563AB46E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{565DDE41-CA46-4369-86CF-D9281B8BDC54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{565DDE41-CA46-4369-86CF-D9281B8BDC54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{565DDE41-CA46-4369-86CF-D9281B8BDC54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{565DDE41-CA46-4369-86CF-D9281B8BDC54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B261D22B-8138-41BB-A17A-614D2CA3AB91}
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8
 	EndGlobalSection
 EndGlobal

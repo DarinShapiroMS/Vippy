@@ -6,7 +6,7 @@
 *.user
 *.userosscache
 *.sln.docstates
-
+PublishProfiles/
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -259,3 +259,4 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/VideoIndexerPOCDeployTemplates
