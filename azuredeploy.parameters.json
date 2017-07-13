@@ -8,11 +8,12 @@
     "branch": {
       "value": "master"
     },
-
-
     "appName": {
-      "value": "VI-API-POC9"
-    }
+      "value": "VI-API-POC88"
+    },
+    "videoIndexerAPIKey" : {
+      "value": "12345"
+    } 
 
   }
 }
