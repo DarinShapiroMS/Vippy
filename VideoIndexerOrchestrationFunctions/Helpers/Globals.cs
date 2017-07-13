@@ -225,9 +225,11 @@ namespace OrchestrationFunctions
 
         /// <summary>
         /// </summary>
-        /// <param name="SaSUrl">Secure link to video file in Azure Storage</param>
+        /// <param name="blobName"></param>
+        /// <param name="saSUrl">Secure link to video file in Azure Storage</param>
+        /// <param name="alternateId"></param>
         /// <returns>VideoBreakdown in JSON format</returns>
-        public static async Task<string> SubmitToVideoIndexerAsync(string blobName, string SaSUrl,
+        public static async Task<string> SubmitToVideoIndexerAsync(string blobName, string saSUrl,
             string alternateId)
         {
             // need to get the processing state to set some of the properties on the VI job
@@ -243,7 +245,7 @@ namespace OrchestrationFunctions
 
             // These can be used to set meta data visible in the VI portal.  
             // required settings
-            queryString["videoUrl"] = SaSUrl;
+            queryString["videoUrl"] = saSUrl;
             queryString["language"] = props.ContainsKey("video_language") ? props["video_language"] : "English";
             queryString["privacy"] = "private";
 

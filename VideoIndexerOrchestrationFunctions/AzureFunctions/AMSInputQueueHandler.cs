@@ -113,15 +113,7 @@ namespace OrchestrationFunctions
             // Starts the job in AMS.  AMS will notify the webhook when it completes
             job.Submit();
 
-            // create the first state record
-            //var state = new VippyProcessingState
-            //{
-            //    BlobName = videofileName,
-            //    Id = state.Properties.ContainsKey("internal_id")
-            //        ? state.Properties["internal_id"]
-            //        : Guid.NewGuid().ToString(),
-            //    CustomProperties = state
-            //};
+          
 
             // update processing progress with id and metadata payload
             await Globals.StoreProcessingStateRecordInCosmosAsync(state);
