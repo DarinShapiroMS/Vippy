@@ -56,7 +56,7 @@ namespace OrchestrationFunctions
                 var state = await Globals.GetProcessingStateRecord(alternateId);
                 
                 // for illustration, lets store the AMS encoding jobs running duration in state
-                
+                state.CustomProperties.Add("amsProcessingDuration", job.RunningDuration.Seconds.ToString());
 
                 var readPolicy =
                     _context.AccessPolicies.Create("readPolicy", TimeSpan.FromHours(4), AccessPermissions.Read);

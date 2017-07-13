@@ -38,10 +38,18 @@ namespace OrchestrationFunctions
             var context = MediaServicesHelper.Context;
 
             var videofileName = videoBlob.Name;
-
+            IAsset newAsset;
             // get a new asset from the blob, and use the file name if video title attribute wasn't passed.
-            var newAsset = CopyBlobHelper.CreateAssetFromBlob(videoBlob,
-                props.ContainsKey("Video_Title")  ? props["Video_Title"] : videofileName, log).GetAwaiter().GetResult();
+            try
+            {
+                newAsset = CopyBlobHelper.CreateAssetFromBlob(videoBlob,
+                       props.ContainsKey("Video_Title") ? props["Video_Title"] : videofileName, log).GetAwaiter().GetResult();
+            }
+            catch (Exception e)
+            {
+
+                throw new ApplicationException($"Error occured creating asset from Blob;/r/n{e.Message}");
+            }
 
             // If an internal_id was passed in the metadata, use it within AMS (AlternateId) and Cosmos(Id - main document id) for correlation.
             // if not, generate a unique id.  If the same id is ever reprocessed, all stored metadata

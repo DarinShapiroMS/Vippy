@@ -26,7 +26,7 @@ namespace OrchestrationFunctions
             [QueueTrigger("vi-processing-complete", Connection = "AzureWebJobsStorage")] CloudQueueMessage myQueueItem,
             TraceWriter log)
         {
-            var queueContents = myQueueItem.AsString;
+             var queueContents = myQueueItem.AsString;
 
             // queue item should be id & state
             var completionData = JsonConvert.DeserializeObject<Dictionary<string, string>>(queueContents);
@@ -139,36 +139,23 @@ namespace OrchestrationFunctions
 
             // since Video Indexer Id is not the primary Id of the document, query by Document Type and
             // Video Index Id
-            var state = client.CreateDocumentQuery<VippyProcessingState>(collectionLink)
-                .Where(so => so.VideoIndexerId == viUniqueId && so.DocumentType == "state")
-                .AsEnumerable()
-                .FirstOrDefault();
+            try
+            {
+                var state = client.CreateDocumentQuery<VippyProcessingState>(collectionLink)
+                       .Where(so => so.VideoIndexerId == viUniqueId && so.DocumentType == "state")
+                       .AsEnumerable()
+                       .FirstOrDefault();
 
-            state.EndTime = DateTime.Now;
-            var response = await client.UpsertDocumentAsync(collectionLink, state);
+                state.EndTime = DateTime.Now;
+                var response = await client.UpsertDocumentAsync(collectionLink, state);
+            }
+            catch (Exception e)
+            {
 
-            //// =============================================
-            //// first get the already existing document by id   
-            //ResourceResponse<Document> response;
-            //VippyProcessingState state;
-            //try
-            //{
-            //    response = await client.ReadDocumentAsync(
-            //        UriFactory.CreateDocumentUri(Globals.CosmosDatabasename, collectionName, VIUniqueId));
-            //    state = (VippyProcessingState) (dynamic) response.Resource;
-            //}
-            //catch (Exception e)
-            //{
-            //    // If document not found, probably an artifact of dev env where docs are being deleted occasionally midway 
-            //    // through processing.  Just create a new one.
-            //    state = new VippyProcessingState
-            //    {
-            //        Id = VIUniqueId
-            //    };
-            //}
+                throw new ApplicationException($"Error trying to update processing state in Cosmos:\r\n{e.Message}");
+            }
 
-
-            // update property values then upsert
+     
         }
 
         private static async Task StoreBreakdownJsonInCosmos(VideoBreakdownPOCO videoBreakdownJson, TraceWriter log)
@@ -185,7 +172,7 @@ namespace OrchestrationFunctions
             try
             {
                 Document r =
-                    await client.CreateDocumentAsync(
+                    await client.UpsertDocumentAsync(
                         UriFactory.CreateDocumentCollectionUri(Globals.CosmosDatabasename, collectionName),
                         videoBreakdownJson);
             }

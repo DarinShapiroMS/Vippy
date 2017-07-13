@@ -15,8 +15,7 @@ namespace OrchestrationFunctions
         [FunctionName("AMSInputBlobWatcher")]
         public static async Task RunAsync([BlobTrigger("encoding-input/{name}.mp4", Connection = 
             "AzureWebJobsStorage")] CloudBlockBlob inputVideoBlob,      // video blob that initiated this function
-            [Blob("encoding-input/{name}.json", FileAccess.Read)]       // optional input json metadata blob
-            string manifestContents,                                    // if a json file with the same name exists, it's content will be in this variable.
+            [Blob("encoding-input/{name}.json", FileAccess.Read)] string manifestContents,  // if a json file with the same name exists, it's content will be in this variable.
             [Queue("ams-input")] IAsyncCollector<string> outputQueue,   // output queue for async processing and resiliency
             TraceWriter log)
         {
@@ -60,7 +59,7 @@ namespace OrchestrationFunctions
             };
 
 
-            Globals.LogMessage(log, $"Video landed in watch folder" + (!string.IsNullOrEmpty(manifestContents) 
+            Globals.LogMessage(log, $"Video '{inputVideoBlob.Name}' landed in watch folder" + (!string.IsNullOrEmpty(manifestContents) 
                 ? " with manifest json": "without manifest file"));
 
             await outputQueue.AddAsync(JsonConvert.SerializeObject(state));

@@ -151,26 +151,23 @@ namespace OrchestrationFunctions
         /// <returns></returns>
         public static async Task StoreProcessingStateRecordInCosmosAsync(VippyProcessingState state)
         {
-            //var alternateId = "";
-            //alternateId = metadata != null ? metadata.Properties["AlternateId"] : Guid.NewGuid().ToString();
 
             var collectionName = ProcessingStateCosmosCollectionName;
             var client = GetCosmosClient(collectionName);
 
-            //var state = new VippyProcessingState
-            //{
-            //    BlobName = blobName,
-            //    Id = alternateId,
-            //    StartTime = DateTime.Now,
-            //    EndTime = null,
-            //    ErrorMessage = "",
-            //    CustomProperties = metadata
-            //};
 
             // upsert the json as a new document
-            Document r =
-                await client.UpsertDocumentAsync(
-                    UriFactory.CreateDocumentCollectionUri(CosmosDatabasename, collectionName), state);
+            try
+            {
+                Document r =
+                       await client.UpsertDocumentAsync(
+                           UriFactory.CreateDocumentCollectionUri(CosmosDatabasename, collectionName), state);
+            }
+            catch (Exception e)
+            {
+
+                throw new ApplicationException($"Error in StoreProcessingStateRecordInCosmosAsync:/r/n{e.Message}");
+            }
         }
 
         public static async Task<VippyProcessingState> GetProcessingStateRecord(string alternateId)
@@ -178,14 +175,32 @@ namespace OrchestrationFunctions
             var collectionName = ProcessingStateCosmosCollectionName;
             var client = GetCosmosClient(collectionName);
 
+            ResourceResponse<Document> response;
 
-            var response = await client.ReadDocumentAsync(
-                UriFactory.CreateDocumentUri(CosmosDatabasename, collectionName, alternateId));
+            try
+            {
+                response = await client.ReadDocumentAsync(
+                       UriFactory.CreateDocumentUri(CosmosDatabasename, collectionName, alternateId));
+            }
+            catch (Exception e)
+            {
+
+                throw new ApplicationException($"Error in GetProcessingStateRecord() reading doc by id:\r\n{e.Message}");
+            }
 
             Console.WriteLine("Document read by Id {0}", response.Resource);
             Console.WriteLine("RU Charge for reading a Document by Id {0}", response.RequestCharge);
 
-            var state = (VippyProcessingState) (dynamic) response.Resource;
+            VippyProcessingState state;
+            try
+            {
+                state = (VippyProcessingState)(dynamic)response.Resource;
+            }
+            catch (Exception e2)
+            {
+
+                throw new ApplicationException($"Error in GetProcessingStateRecord() casting response.resource to processing state:\r\n{e2.Message}");
+            }
 
             return state;
         }
@@ -213,7 +228,7 @@ namespace OrchestrationFunctions
         /// <param name="SaSUrl">Secure link to video file in Azure Storage</param>
         /// <returns>VideoBreakdown in JSON format</returns>
         public static async Task<string> SubmitToVideoIndexerAsync(string blobName, string SaSUrl,
-            string alternateId = null)
+            string alternateId)
         {
             // need to get the processing state to set some of the properties on the VI job
             var state = await GetProcessingStateRecord(alternateId);
@@ -257,7 +272,7 @@ namespace OrchestrationFunctions
             // delete the breakdown
             //DeleteBreakdown();
             // don't delete for now since we need to use the VI portal to train faces
-
+            
             return videoIndexerId;
         }
 
