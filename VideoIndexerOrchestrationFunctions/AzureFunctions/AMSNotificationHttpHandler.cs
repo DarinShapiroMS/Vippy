@@ -1,20 +1,19 @@
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
 
 namespace OrchestrationFunctions
 {
     public static class AMSNotificationHttpHandler
     {
         [FunctionName("AMSNotificationHttpHandler")]
-        public static async Task<object> Run([HttpTrigger(WebHookType = "genericJson",Route = "amscallback" )]HttpRequestMessage req,
+        public static async Task<object> Run(
+            [HttpTrigger(WebHookType = "genericJson", Route = "amscallback")] HttpRequestMessage req,
             [Queue("encoding-complete", Connection = "AzureWebJobsStorage")] IAsyncCollector<string> outputQueue,
             TraceWriter log)
         {
-
             /*
  Finished JSON message
 {
@@ -50,10 +49,10 @@ Registration JSON message
              * 
              */
 
-            log.Info($"Webhook was triggered by {req.Headers.UserAgent.ToString()}");
+            log.Info($"Webhook was triggered by {req.Headers.UserAgent}");
 
 
-            string jsonContent = await req.Content.ReadAsStringAsync();
+            var jsonContent = await req.Content.ReadAsStringAsync();
             await outputQueue.AddAsync(jsonContent);
             //dynamic data = JsonConvert.DeserializeObject(jsonContent);
 

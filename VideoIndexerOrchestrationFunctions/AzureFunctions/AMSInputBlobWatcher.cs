@@ -1,112 +1,70 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
-using Microsoft.WindowsAzure.MediaServices.Client;
 using Microsoft.WindowsAzure.Storage.Blob;
-using System.Linq;
-using System;
-using System.Threading;
+using Newtonsoft.Json;
 
 namespace OrchestrationFunctions
 {
     public static class AMSInputBlobWatcher
     {
-
-        // NOTE: You have to update the WebHookEndpoint and Signing Key that you wish to use in the AppSettings to match
-        //       your deployed Notification_Webhook_Function. After deployment, you will have a unique endpoint. 
-        static string _webHookEndpoint = Environment.GetEnvironmentVariable("MediaServicesNotificationWebhookUrl");
-        static string _signingKey = Environment.GetEnvironmentVariable("MediaServicesWebhookSigningKey");
-
-        [FunctionName("AMSInputBlobWatcher")]        
-        public static void Run([BlobTrigger("encoding-input/{name}", Connection = "AzureWebJobsStorage")]CloudBlockBlob inputBlob, TraceWriter log)
+       
+        [FunctionName("AMSInputBlobWatcher")]
+        public static async Task RunAsync([BlobTrigger("encoding-input/{name}.mp4", Connection = 
+            "AzureWebJobsStorage")] CloudBlockBlob inputVideoBlob,      // video blob that initiated this function
+            [Blob("encoding-input/{name}.json", FileAccess.Read)]       // optional input json metadata blob
+            string manifestContents,                                    // if a json file with the same name exists, it's content will be in this variable.
+            [Queue("ams-input")] IAsyncCollector<string> outputQueue,   // output queue for async processing and resiliency
+            TraceWriter log)
         {
-            //log.Info($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {inputBlob.Length} Bytes");
-
-            string fileName = inputBlob.Name;
+            //================================================================================
+            // Function AMSInputBlobWatcher
+            // Purpose:
+            // This function monitors a blob container for new mp4 video files (TODO:// update
+            // filter to include all video formats supported by MES).  If the video files are 
+            // accompanied by a json file with the same file name, it will use this json file
+            // for metadata such as video title, external ids, etc.  Any custom fields added
+            // to this meta data file will be stored with the resulting document in Cosmos. 
+            // ** Rather than doing any real processing here, just forward the payload to a
+            // queue to be more resilient. A client app can either post files to the storage
+            // container or add items to the queue directly.  Aspera or Signiant users will 
+            // most likely opt to use the watch folder. 
+            // ** NOTE - the json file must be dropped into the container first. 
+            //================================================================================
             
-            CloudMediaContext context = MediaServicesHelper.Context;
-
-            IAsset newAsset = CopyBlobHelper.CreateAssetFromBlob(inputBlob, fileName, log).GetAwaiter().GetResult();
-
-
-            // delete the source input from the watch folder
-            inputBlob.DeleteIfExists();
-
-            // copy blob into new asset
-            // create the encoding job
-            IJob job = context.Jobs.Create("MES encode from input container - ABR streaming");
             
-            // Get a media processor reference, and pass to it the name of the 
-            // processor to use for the specific task.
-            IMediaProcessor processor = MediaServicesHelper.GetLatestMediaProcessorByName("Media Encoder Standard");
+            // if metadata json was used, get it's values as a dictionary
+            var metaDataDictionary = 
+                !string.IsNullOrEmpty(manifestContents) 
+                ? JsonConvert.DeserializeObject<Dictionary<string, string>>(manifestContents) 
+                : new Dictionary<string, string>();
 
-            ITask task = job.Tasks.AddNew("720p mbr encoding",
-                processor,
-                "Content Adaptive Multiple Bitrate MP4",
-                TaskOptions.None
-                );
+            // work out the global id for this video. If internal_id was in manifest json, use that. 
+            // Otherwise create a new one
+            var globalId = metaDataDictionary.ContainsKey("internal_id") 
+                ? metaDataDictionary["internal_id"] 
+                : Guid.NewGuid().ToString();
 
-            task.Priority = 100;
-
-            task.InputAssets.Add(newAsset);
-
-            // setup webhook notification
-            //byte[] keyBytes = Convert.FromBase64String(_signingKey);
-            byte[] keyBytes = new byte[32];
-
-            // Check for existing Notification Endpoint with the name "FunctionWebHook"
-            var existingEndpoint = context.NotificationEndPoints.Where(e => e.Name == "FunctionWebHook").FirstOrDefault();
-            INotificationEndPoint endpoint = null;
-
-            if (existingEndpoint != null)
+            // add values to the state variable that is stored in Cosmos to keep track
+            // of various stages of processing, which also allows passing values from the json manifest
+            // file to the final document stored in Cosmos
+            var state = new VippyProcessingState
             {
-                
-                endpoint = (INotificationEndPoint)existingEndpoint;
-            }
-            else
-            {
-                try
-                {
-                    //byte[] credential = new byte[64];
-                    endpoint = context.NotificationEndPoints.Create("FunctionWebHook",
-                                   NotificationEndPointType.WebHook, _webHookEndpoint, keyBytes);
-                }
-                catch (Exception ex)
-                {
-                    throw new ApplicationException($"The endpoing address specified - '{_webHookEndpoint}' is not valid.");
-                }
-                
-            }
+                Id = globalId,               
+                BlobName = inputVideoBlob.Name,
+                StartTime = DateTime.Now,
+                CustomProperties = metaDataDictionary,
+            };
 
-            task.TaskNotificationSubscriptions.AddNew(NotificationJobState.FinalStatesOnly, endpoint, false);
 
-            // Add an output asset to contain the results of the job. 
-            // This output is specified as AssetCreationOptions.None, which 
-            // means the output asset is not encrypted. 
-            task.OutputAssets.AddNew(fileName, AssetCreationOptions.None);
+            Globals.LogMessage(log, $"Video landed in watch folder" + (!string.IsNullOrEmpty(manifestContents) 
+                ? " with manifest json": "without manifest file"));
 
-            job.Submit();
+            await outputQueue.AddAsync(JsonConvert.SerializeObject(state));
 
-            //while (true)
-            //{
-            //    job.Refresh();
-            //    // Refresh every 5 seconds
-            //    Thread.Sleep(5000);
-            //    log.Info($"Job ID:{job.Id} State: {job.State.ToString()}");
-
-            //    if (job.State == JobState.Error || job.State == JobState.Finished || job.State == JobState.Canceled)
-            //        break;
-            //}
-
-            //if (job.State == JobState.Finished)
-            //    log.Info($"Job {job.Id} is complete.");
-            //else if (job.State == JobState.Error)
-            //{
-            //    log.Error("Job Failed with Error. ");
-            //    throw new Exception("Job failed encoding .");
-            //}
-            Globals.LogMessage(log, $"AMS encoding job submitted for {fileName}");
-
-        }
+      }
     }
 }
