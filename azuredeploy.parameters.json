@@ -9,10 +9,8 @@
       "value": "master"
     },
 
-    "Cosmos_Database_name": {
-      "value": "videobreakdowncosmos"
-    },
-    "AppName": {
+
+    "appName": {
       "value": "VI-API-POC9"
     }
 
