@@ -1,5 +1,5 @@
 # Vippy 
-<b>V</b>ideo <b>I</b>ndexing and <b>P</b>rocessing <b>P</b>ipeline <b>Y</b>
+<h2><b>V</b>ideo <b>I</b>ndexing and <b>P</b>rocessing <b>P</b>ipeline <b>Y</b></h2>
 <br>
 An orchestration of Azure Media Services and Video Indexer using Azure Functions and CosmosDb
 <br>
