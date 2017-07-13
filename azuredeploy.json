@@ -8,12 +8,7 @@
     "branch": {
       "type": "string"
     },
-
-    "Cosmos_Database_name": {
-      "defaultValue": "videobreakdowncosmos",
-      "type": "string"
-    },
-    "AppName": {
+    "appName": {
       "defaultValue": "VI-API-POC2",
       "type": "string",
       "maxLength": 12,
@@ -24,9 +19,9 @@
     }
   },
   "variables": {
-    "uniqueAppName": "[replace(toLower(concat(parameters('AppName'), uniqueString(resourceGroup().id))), '-','')]",
+    "uniqueAppName": "[replace(toLower(concat(parameters('appName'), uniqueString(resourceGroup().id))), '-','')]",
     "uniqueResourcePrefix": "[uniqueString(resourceGroup().id)]",
-    "Serviceplan_name": "[concat(variables('uniqueAppName'), 'plan')]",
+    "servicePlanName": "[concat(variables('uniqueAppName'), 'plan')]",
     "mediaServicesAccountName": "[variables('uniqueAppName')]",
     "storageAccountName": "[variables('uniqueAppName')]",
     "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
@@ -49,7 +44,7 @@
           "maxIntervalInSeconds": 5,
           "maxStalenessPrefix": 100
         },
-        "name": "[parameters('Cosmos_Database_name')]"
+        "name": "videobreakdowncosmos"
       },
       "dependsOn": []
     },
@@ -59,7 +54,7 @@
       "sku": {
         "name": "free"
       },
-      "name": "[toLower(parameters('AppName'))]",
+      "name": "[toLower(parameters('appName'))]",
       "apiVersion": "2015-08-19",
       "location": "[resourceGroup().location]",
       "scale": null,
@@ -113,11 +108,11 @@
         "capacity": 0
       },
       "kind": "functionapp",
-      "name": "[variables('Serviceplan_name')]",
+      "name": "[variables('servicePlanName')]",
       "apiVersion": "2015-08-01",
       "location": "[resourceGroup().location]",
       "properties": {
-        "name": "[variables('Serviceplan_name')]",
+        "name": "[variables('servicePlanName')]",
         "numberOfWorkers": 0
       },
       "dependsOn": []
@@ -154,10 +149,10 @@
             "ipBasedSslState": 0
           }
         ],
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('Serviceplan_name'))]"
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('servicePlanName'))]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', variables('Serviceplan_name'))]"
+        "[resourceId('Microsoft.Web/serverfarms', variables('servicePlanName'))]"
       ],
       "resources": [
         {
@@ -207,7 +202,7 @@
             "properties": {
               "RepoUrl": "[parameters('repoURL')]",
               "branch": "[parameters('branch')]",
-              "isManualIntegration": false
+              "isManualIntegration": true
             }
           }
         
