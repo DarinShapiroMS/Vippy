@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace OrchestrationFunctions
 {
-    public static class AmsInputBlobWatcher
+    public static class AMSInputBlobWatcher
     {
        
         [FunctionName("AMSInputBlobWatcher")]
