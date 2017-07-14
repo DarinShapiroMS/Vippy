@@ -22,7 +22,7 @@ namespace OrchestrationFunctions
 
         [FunctionName("AMSInputQueueHandler")]
         public static async Task Run([QueueTrigger("ams-input", Connection = "AzureWebJobsStorage")] VippyProcessingState state,
-            [Blob("encoding-input/{BlobName}", FileAccess.ReadWrite)] CloudBlockBlob videoBlob,
+            [Blob("%amsBlobInputContainer%/{BlobName}", FileAccess.ReadWrite)] CloudBlockBlob videoBlob,
             TraceWriter log)
         {
 
