@@ -12,11 +12,17 @@
       "defaultValue": "VI-API-POC2",
       "type": "string",
       "maxLength": 12,
-      "minLength" : 3,
+      "minLength": 3,
       "metadata": {
         "description": "The name to be used for the various services involved, such as Azure Search, Azure Functions, etc. \r\nmust only contain lowercase letters, digits or dashes, cannot use dash as the first two or last one characters, cannot contain consecutive dashes, and is limited between 3 and 12 characters in length."
       }
-    }
+    },
+    "videoIndexerAPIKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The API key needed to access Video Indexer. You get this value by logging into https://videobreakdown.portal.azure-api.net/"
+      }
+    } 
   },
   "variables": {
     "uniqueAppName": "[replace(toLower(concat(parameters('appName'), uniqueString(resourceGroup().id))), '-','')]",
@@ -175,7 +181,7 @@
             "FUNCTIONS_EXTENSION_VERSION": "~1",
             "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
             "WEBSITE_CONTENTSHARE": "[toLower(variables('uniqueAppName'))]",
-            "VideoIndexer_Key": "GetKeyFromVideoIndexer",
+            "VideoIndexer_Key": "[parameters('videoIndexerAPIKey')]",
             "Video_Indexer_Callback_url": "[concat('https://', concat(variables('uniqueAppName'), '.azurewebsites.net'), '/api/vicallback')]",
             "Video_Input_Container": "video-input/{name}",
             "Cosmos_Endpoint": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('uniqueAppName'))).documentEndpoint]",
