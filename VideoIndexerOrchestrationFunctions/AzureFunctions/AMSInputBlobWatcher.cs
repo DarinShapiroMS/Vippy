@@ -9,13 +9,13 @@ using Newtonsoft.Json;
 
 namespace OrchestrationFunctions
 {
-    public static class AMSInputBlobWatcher
+    public static class AmsInputBlobWatcher
     {
        
         [FunctionName("AMSInputBlobWatcher")]
-        public static async Task RunAsync([BlobTrigger("encoding-input/{name}.mp4", Connection = 
+        public static async Task RunAsync([BlobTrigger("%amsBlobInputContainer%/{name}.mp4", Connection = 
             "AzureWebJobsStorage")] CloudBlockBlob inputVideoBlob,      // video blob that initiated this function
-            [Blob("encoding-input/{name}.json", FileAccess.Read)] string manifestContents,  // if a json file with the same name exists, it's content will be in this variable.
+            [Blob("%amsBlobInputContainer%/{name}.json", FileAccess.Read)] string manifestContents,  // if a json file with the same name exists, it's content will be in this variable.
             [Queue("ams-input")] IAsyncCollector<string> outputQueue,   // output queue for async processing and resiliency
             TraceWriter log)
         {
