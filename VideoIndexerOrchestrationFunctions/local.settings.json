@@ -1,21 +1,23 @@
 {
     "IsEncrypted": false,
   "Values": {
-    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=viapipoc9hckf5jj2twnea;AccountKey=3EO3nGRgJGSytti8q1P1qD3i34tqu6LL2+jwD3pYgj8AQRTXJ52TheLo5twZOBmIhrt+ARISAfNYKj+2YmfebQ==;EndpointSuffix=core.windows.net",
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=vippyakyitteqgr2wg;AccountKey=wAC4KwOjd4sN8KAcJFguU4boqEN2SoJQa4bgj+QNAOMmwgPiMpDyT0eCQF7qjMQGi6TDqlLOO4TwCV/baoqz4g==",
     "AzureWebJobsDashboard": "",
     "VideoIndexer_Key": "cb2980a155f0465c9cc5fed037f4596f",
-    "Cosmos_Endpoint": "https://viapipoc9hckf5jj2twnea.documents.azure.com:443/",
-    "Cosmos_Key": "q5LdK0NscyDNo94Z1IJ7ElowS6Cv8r5FiR7mTj1Nhw42PQKyx6BGiDNKRvuOavxL4uSOgwRcEjaxn49Vx8ezSA==",
+    "Cosmos_Endpoint": "https://vippyakyitteqgr2wg.documents.azure.com:443/",
+    "Cosmos_Key": "Q5Ksh3PdV1FYA4uEvpngvSrmHDqj91B6dbzzeplTkSm7SDXvPyae1uaS7Dza01ppZ2hor7yfGyoh6c0IyEgghQ==",
     "Cosmos_Database_Name": "VideoBreakdowns",
     "Cosmos_Collection_Name": "Breakdowns",
-    "Video_Input_Container": "video-input/{name}",
-    "Video_Indexer_Callback_url": "https://viapipoc9hckf5jj2twnea.azurewebsites.net/api/vicallback",
-    "MediaServicesNotificationWebhookUrl": "https://viapipoc9hckf5jj2twnea.azurewebsites.net/api/amscallback?code=EXj18yjZiTQsVnZpmbd4sve4E3bGvkCOE7zN/RPHLGGbNRsR4YTxmA==",
-    "MediaServicesWebhookSigningKey": "j0txf1f8msjytzvpe40nxbpxdcxtqcgx",
-    "MediaServicesAccountName": "viapipoc9hckf5jj2twnea",
-    "MediaServicesAccountKey": "EFEk4wJiMrfmA1C7dfa7IXMWSpkMJLIlZDfORgrK3gM=",
-    "MediaServicesStorageAccountName": "viapipoc9hckf5jj2twnea",
-    "MediaServicesStorageAccountKey": "3EO3nGRgJGSytti8q1P1qD3i34tqu6LL2+jwD3pYgj8AQRTXJ52TheLo5twZOBmIhrt+ARISAfNYKj+2YmfebQ=="
+    "videoIndxerBlobInputContainer": "vi-input",
+    "amsBlobInputContainer": "ams-encoding-input",
+    "Video_Indexer_Callback_url": "https://vippyakyitteqgr2wg.azurewebsites.net/api/vicallback",
+    "MediaServicesNotificationWebhookUrl": "https://vippyakyitteqgr2wg.azurewebsites.net/api/amscallback?code=hZrG46VNcC8HdDAaSJUChSypaN0ah5FtgtFC/XeAVxpa9C9wz79eZQ==&clientId=default",
+    "MediaServicesWebhookSigningKey": "j0txf1f8msjytzvpe40nxbpxdcxtqcgxy0nt",
+    "MediaServicesAccountName": "vippyakyitteqgr2wg",
+    "MediaServicesAccountKey": "tuGYLq0aEErG/U38+DWmeBpmDo3B1U/bVQeTtrFMg04=",
+    "MediaServicesStorageAccountName": "vippyakyitteqgr2wg",
+    "MediaServicesStorageAccountKey": "wAC4KwOjd4sN8KAcJFguU4boqEN2SoJQa4bgj+QNAOMmwgPiMpDyT0eCQF7qjMQGi6TDqlLOO4TwCV/baoqz4g=="
+   
 
   }
 }

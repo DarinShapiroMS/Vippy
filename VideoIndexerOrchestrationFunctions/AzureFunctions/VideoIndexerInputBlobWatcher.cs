@@ -70,12 +70,12 @@ namespace OrchestrationFunctions
             await Globals.StoreProcessingStateRecordInCosmosAsync(state);
 
             // get a SAS url for the blob       
-            var SaSUrl = Globals.GetSasUrl(myBlob);
-            Globals.LogMessage(log, $"Got SAS url {SaSUrl}");
+            var sasUrl = Globals.GetSasUrl(myBlob);
+            Globals.LogMessage(log, $"Got SAS url {sasUrl}");
 
             // call the api to process the video in VideoIndexer
-            var VideoIndexerUniqueId = Globals.SubmitToVideoIndexerAsync(fileName, SaSUrl, globalId).Result;
-            Globals.LogMessage(log, $"VideoId {VideoIndexerUniqueId} submitted to Video Indexer!");
+            var videoIndexerUniqueId = Globals.SubmitToVideoIndexerAsync(fileName, sasUrl, globalId).Result;
+            Globals.LogMessage(log, $"VideoId {videoIndexerUniqueId} submitted to Video Indexer!");
         }
     }
 }
