@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.WebJobs;
@@ -26,7 +27,9 @@ namespace OrchestrationFunctions
             [QueueTrigger("vi-processing-complete", Connection = "AzureWebJobsStorage")] CloudQueueMessage myQueueItem,
             TraceWriter log)
         {
-             var queueContents = myQueueItem.AsString;
+            //TelemetryClient appInsightsClient = new TelemetryClient();
+            
+            var queueContents = myQueueItem.AsString;
 
             // queue item should be id & state
             var completionData = JsonConvert.DeserializeObject<Dictionary<string, string>>(queueContents);
@@ -39,20 +42,43 @@ namespace OrchestrationFunctions
 
             var apiUrl = Globals.VideoIndexerApiUrl;
             var client = Globals.GetVideoIndexerHttpClient();
-            var result = client.GetAsync(string.Format(apiUrl + "/{0}", videoIndexerVideoId)).Result;
-            var json = result.Content.ReadAsStringAsync().Result;
 
+            var viResultsTask = client.GetAsync(string.Format(apiUrl + "/{0}", videoIndexerVideoId));
+            var stateTask = Globals.GetProcessingStateRecord(videoIndexerVideoId);
+
+            await Task.WhenAll(viResultsTask, stateTask);
+
+            var json = viResultsTask.Result.Content.ReadAsStringAsync().Result;
             var videoBreakdownPoco = JsonConvert.DeserializeObject<VideoBreakdownPOCO>(json);
 
+            var state = stateTask.Result;
+
+            var taskList = new List<Task>();
             // these tasks are network io dependant and can happen in parallel
-            var englishCaptionsTask = GetCaptionsVttAsync(videoIndexerVideoId, videoBreakdownPoco, "English");
-            var japaneseCaptionsTask = GetCaptionsVttAsync(videoIndexerVideoId, videoBreakdownPoco, "Japanese");
-            var imagesTask = ExtractImages(videoBreakdownPoco);
-            await Task.WhenAll(englishCaptionsTask, japaneseCaptionsTask, imagesTask);
+            //TODO:  setup default languages to be pulled from app settings, but
+            //TODO: the languages set in config would override
+            //TODO: validate languages
+            if (state.Transcripts != null)
+            {
+                 taskList = state.Transcripts
+                    .Select(language => GetCaptionsVttAsync(videoIndexerVideoId, videoBreakdownPoco, language))
+                    .ToList();               
+            }
 
+            taskList.Add(ExtractImages(videoBreakdownPoco));
+            //var englishCaptionsTask = GetCaptionsVttAsync(videoIndexerVideoId, videoBreakdownPoco, "English");
+            //var japaneseCaptionsTask = GetCaptionsVttAsync(videoIndexerVideoId, videoBreakdownPoco, "Japanese");
+            //var imagesTask = ExtractImages(videoBreakdownPoco);
 
-            await StoreBreakdownJsonInCosmos(videoBreakdownPoco, log);
-            await UpdateProcessingStateAsync(completionData["id"]);
+            await Task.WhenAll(taskList.ToArray());
+            
+
+            // we wait to store breakdown json because it's modified in previous tasks
+            var storeTask1 = StoreBreakdownJsonInCosmos(videoBreakdownPoco, log);
+            var storeTask2 = UpdateProcessingStateAsync(completionData["id"]);
+
+            await Task.WhenAll(storeTask1, storeTask2);
+
         }
 
         private static async Task GetCaptionsVttAsync(string id, VideoBreakdownPOCO videoBreakdownPoco, string language)

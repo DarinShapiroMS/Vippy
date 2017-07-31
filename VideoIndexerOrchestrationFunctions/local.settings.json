@@ -1,23 +1,23 @@
 {
     "IsEncrypted": false,
   "Values": {
-    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=vippyakyitteqgr2wg;AccountKey=wAC4KwOjd4sN8KAcJFguU4boqEN2SoJQa4bgj+QNAOMmwgPiMpDyT0eCQF7qjMQGi6TDqlLOO4TwCV/baoqz4g==",
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=vippy0x6juzeritkwwc;AccountKey=GuZ/wPVCAStLB73dUYhccqjjzRnnZt2iK7j0SJm3wLrYB+WUn+EaOqzHzsupRFX/V2h9V4wU+5W0XdGSsMbVAA==",
     "AzureWebJobsDashboard": "",
     "VideoIndexer_Key": "cb2980a155f0465c9cc5fed037f4596f",
-    "Cosmos_Endpoint": "https://vippyakyitteqgr2wg.documents.azure.com:443/",
-    "Cosmos_Key": "Q5Ksh3PdV1FYA4uEvpngvSrmHDqj91B6dbzzeplTkSm7SDXvPyae1uaS7Dza01ppZ2hor7yfGyoh6c0IyEgghQ==",
+    "Cosmos_Endpoint": "https://vippy0x6juzeritkwwc.documents.azure.com:443/",
+    "Cosmos_Key": "cpiM23VtBCy8OV9uA6lYMSEfk3NlZpZr7IaCB8qqbT0M96EiF7uitrlrP2IaNyW2XZk7IU1Vn33LNMw7iYD4dA==",
     "Cosmos_Database_Name": "VideoBreakdowns",
     "Cosmos_Collection_Name": "Breakdowns",
     "videoIndxerBlobInputContainer": "vi-input",
     "amsBlobInputContainer": "ams-encoding-input",
-    "Video_Indexer_Callback_url": "https://vippyakyitteqgr2wg.azurewebsites.net/api/vicallback",
-    "MediaServicesNotificationWebhookUrl": "https://vippyakyitteqgr2wg.azurewebsites.net/api/amscallback?code=hZrG46VNcC8HdDAaSJUChSypaN0ah5FtgtFC/XeAVxpa9C9wz79eZQ==&clientId=default",
+    "Video_Indexer_Callback_url": "https://vippy0x6juzeritkwwc.azurewebsites.net/api/vicallback?code=ECPMPwqVTPbsfFbajw0F0CoYlR/A7zmXNQo1EE66O0pxQZYzNt5qSw==",
+    "MediaServicesNotificationWebhookUrl": "https://vippy0x6juzeritkwwc.azurewebsites.net/api/amscallback?code=LsPYNRTcSmqfmi3yovw28ta8Sey5seCCoLJl7IUY0svfKhwF37Ja3A==&clientId=default",
     "MediaServicesWebhookSigningKey": "j0txf1f8msjytzvpe40nxbpxdcxtqcgxy0nt",
-    "MediaServicesAccountName": "vippyakyitteqgr2wg",
-    "MediaServicesAccountKey": "tuGYLq0aEErG/U38+DWmeBpmDo3B1U/bVQeTtrFMg04=",
-    "MediaServicesStorageAccountName": "vippyakyitteqgr2wg",
-    "MediaServicesStorageAccountKey": "wAC4KwOjd4sN8KAcJFguU4boqEN2SoJQa4bgj+QNAOMmwgPiMpDyT0eCQF7qjMQGi6TDqlLOO4TwCV/baoqz4g=="
-   
+    "MediaServicesAccountName": "vippy0x6juzeritkwwc",
+    "MediaServicesAccountKey": "jBMnCk7jHM9ZGJdhb0VwgINpSxvTxNecocSrGmWFlA4=",
+    "MediaServicesStorageAccountName": "vippy0x6juzeritkwwc",
+    "MediaServicesStorageAccountKey": "GuZ/wPVCAStLB73dUYhccqjjzRnnZt2iK7j0SJm3wLrYB+WUn+EaOqzHzsupRFX/V2h9V4wU+5W0XdGSsMbVAA=="
+
 
   }
 }

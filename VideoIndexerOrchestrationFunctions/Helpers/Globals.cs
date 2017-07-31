@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -18,22 +19,10 @@ namespace OrchestrationFunctions
         public static readonly string VideoIndexerApiUrl =
             "https://videobreakdown.azure-api.net/Breakdowns/Api/Partner/Breakdowns";
 
+        private static CloudBlobContainer _videoIndexerResourcesContainer;
 
-        static Globals()
-        {
-            // initialize VI resources container
-            var amsStorageClient = CopyBlobHelper.AmsStorageAccount.CreateCloudBlobClient();
-            var imageContainer = amsStorageClient.GetContainerReference("video-indexer-resources");
 
-            if (imageContainer.CreateIfNotExists())
-            {
-                // configure container for public access
-                var permissions = imageContainer.GetPermissions();
-                permissions.PublicAccess = BlobContainerPublicAccessType.Container;
-                imageContainer.SetPermissions(permissions);
-            }
-            VideoIndexerResourcesContainer = imageContainer;
-        }
+      
 
 
         /// <summary>
@@ -71,7 +60,29 @@ namespace OrchestrationFunctions
 
         #region Properties
 
-        public static CloudBlobContainer VideoIndexerResourcesContainer { get; set; }
+        public static CloudBlobContainer VideoIndexerResourcesContainer
+        {
+            get
+            {
+                if (_videoIndexerResourcesContainer != null) return _videoIndexerResourcesContainer;
+
+                // initialize VI resources container
+                var amsStorageClient = CopyBlobHelper.AmsStorageAccount.CreateCloudBlobClient();
+                var imageContainer = amsStorageClient.GetContainerReference("video-indexer-resources");
+
+                if (imageContainer.CreateIfNotExists())
+                {
+                    // configure container for public access
+                    var permissions = imageContainer.GetPermissions();
+                    permissions.PublicAccess = BlobContainerPublicAccessType.Container;
+                    imageContainer.SetPermissions(permissions);
+                }
+                _videoIndexerResourcesContainer = imageContainer;
+
+                return _videoIndexerResourcesContainer;
+            }
+           
+        }
 
         public static string CosmosDatabasename
         {
@@ -170,6 +181,19 @@ namespace OrchestrationFunctions
             }
         }
 
+        public static VippyProcessingState GetManifestStateRecord(string Id)
+        {
+            var collectionName = ProcessingStateCosmosCollectionName;
+            var client = GetCosmosClient(collectionName);
+            var uri = UriFactory.CreateDocumentCollectionUri(CosmosDatabasename, collectionName);
+
+            var state = client
+                .CreateDocumentQuery<VippyProcessingState>(uri)
+                .FirstOrDefault(q => q.DocumentType == "state" && q.AlternateId == Id);
+
+            return state;
+        }
+
         public static async Task<VippyProcessingState> GetProcessingStateRecord(string alternateId)
         {
             var collectionName = ProcessingStateCosmosCollectionName;
@@ -230,7 +254,7 @@ namespace OrchestrationFunctions
         /// <param name="alternateId"></param>
         /// <returns>VideoBreakdown in JSON format</returns>
         public static async Task<string> SubmitToVideoIndexerAsync(string blobName, string saSUrl,
-            string alternateId)
+            string alternateId, TraceWriter log)
         {
             // need to get the processing state to set some of the properties on the VI job
             var state = await GetProcessingStateRecord(alternateId);
@@ -250,10 +274,10 @@ namespace OrchestrationFunctions
             queryString["privacy"] = "private";
 
             // optional settings - mostly VI portal UI related
-            queryString["name"] = props.ContainsKey("video_title") ? props["video_title"] : state.BlobName;
-            queryString["description"] = props.ContainsKey("video_title")
-                ? props["video_title"]
-                : "video desc not set in json";
+            var videoTitle = props.ContainsKey("video_title") ? props["video_title"] : state.BlobName;
+            var videoDescription = props.ContainsKey("video_title") ? props["video_title"] : "video desc not set in json";
+            queryString["name"] = videoTitle;
+            queryString["description"] = videoDescription;
             queryString["callbackUrl"] = videoIndexerCallbackUrl;
             queryString["externalId"] = alternateId;
             //queryString["metadata"] = "{string}";
@@ -274,6 +298,8 @@ namespace OrchestrationFunctions
             // delete the breakdown
             //DeleteBreakdown();
             // don't delete for now since we need to use the VI portal to train faces
+            
+            Globals.LogMessage(log, $"Submitted videoId '{alternateId}', title '{videoTitle}'");
             
             return videoIndexerId;
         }

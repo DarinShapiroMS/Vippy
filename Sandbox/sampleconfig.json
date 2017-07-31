@@ -1,0 +1,13 @@
+﻿{
+  "internal_id": "319323",
+  "video_title": "Title set from json",
+  "video_desc": "Desc set from json",
+  "video_language": "English",
+  "transcripts": [ "English", "Spanish", "Russian" ],
+  "custom": {
+    "customProp1": "value",
+    "customProp2": "value" 
+  } 
+
+}
+	

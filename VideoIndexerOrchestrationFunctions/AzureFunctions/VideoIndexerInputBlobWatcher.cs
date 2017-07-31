@@ -60,7 +60,7 @@ namespace OrchestrationFunctions
             // file to the final document stored in Cosmos
             var state = new VippyProcessingState
             {
-                Id = globalId,
+                AlternateId = globalId,
                 BlobName = fileName,
                 StartTime = DateTime.Now,
                 CustomProperties = metaDataDictionary,
@@ -74,7 +74,7 @@ namespace OrchestrationFunctions
             Globals.LogMessage(log, $"Got SAS url {sasUrl}");
 
             // call the api to process the video in VideoIndexer
-            var videoIndexerUniqueId = Globals.SubmitToVideoIndexerAsync(fileName, sasUrl, globalId).Result;
+            var videoIndexerUniqueId = Globals.SubmitToVideoIndexerAsync(fileName, sasUrl, globalId, log).Result;
             Globals.LogMessage(log, $"VideoId {videoIndexerUniqueId} submitted to Video Indexer!");
         }
     }

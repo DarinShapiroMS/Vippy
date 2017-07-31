@@ -52,6 +52,7 @@ namespace OrchestrationFunctions
                 var inputAsset = task.InputAssets[0];
                 var alternateId = inputAsset.AlternateId;
 
+                // TODO: this is problematic.. see why it throws from here?
                 // get state record for tracking some ams related values
                 var state = await Globals.GetProcessingStateRecord(alternateId);
                 
@@ -76,7 +77,7 @@ namespace OrchestrationFunctions
                 var sas = Globals.GetSasUrl(biggestblob);
 
                 // Submit processing job to Video Indexer
-                await Globals.SubmitToVideoIndexerAsync(biggestblob.Name, sas, inputAsset.AlternateId);
+                await Globals.SubmitToVideoIndexerAsync(biggestblob.Name, sas, inputAsset.AlternateId, log);
             }
         }
 

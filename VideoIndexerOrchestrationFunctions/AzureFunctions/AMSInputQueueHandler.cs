@@ -6,6 +6,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.MediaServices.Client;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Newtonsoft.Json;
 
 namespace OrchestrationFunctions
 {
@@ -21,7 +22,7 @@ namespace OrchestrationFunctions
 
 
         [FunctionName("AMSInputQueueHandler")]
-        public static async Task Run([QueueTrigger("ams-input", Connection = "AzureWebJobsStorage")] VippyProcessingState state,
+        public static async Task Run([QueueTrigger("ams-input", Connection = "AzureWebJobsStorage")] VippyProcessingState manifest,
             [Blob("%amsBlobInputContainer%/{BlobName}", FileAccess.ReadWrite)] CloudBlockBlob videoBlob,
             TraceWriter log)
         {
@@ -34,16 +35,23 @@ namespace OrchestrationFunctions
             // webhook will be called by AMS which causes the next stage of the pipeline to 
             // continue.
             //================================================================================
-            var props = state.CustomProperties;
+
             var context = MediaServicesHelper.Context;
 
+            // only set the starttime if it wasn't already set in blob watcher function (that way
+            // it works if the job is iniaited by using this queue directly
+            if(manifest.StartTime == null)
+                manifest.StartTime = DateTime.Now;
+            
             var videofileName = videoBlob.Name;
-            IAsset newAsset;
+            var videoTitle = manifest.videoTitle ?? videofileName;
+
             // get a new asset from the blob, and use the file name if video title attribute wasn't passed.
+            IAsset newAsset;
             try
             {
                 newAsset = CopyBlobHelper.CreateAssetFromBlob(videoBlob,
-                       props.ContainsKey("Video_Title") ? props["Video_Title"] : videofileName, log).GetAwaiter().GetResult();
+                    videoTitle, log).GetAwaiter().GetResult();
             }
             catch (Exception e)
             {
@@ -55,8 +63,10 @@ namespace OrchestrationFunctions
             // if not, generate a unique id.  If the same id is ever reprocessed, all stored metadata
             // will be overwritten.
 
-            newAsset.AlternateId = state.Id;
+            newAsset.AlternateId = manifest.AlternateId;
             newAsset.Update();
+
+            manifest.AmsAssetId = newAsset.Id;
 
             // delete the source input from the watch folder
             videoBlob.DeleteIfExists();
@@ -112,11 +122,9 @@ namespace OrchestrationFunctions
 
             // Starts the job in AMS.  AMS will notify the webhook when it completes
             job.Submit();
-
-          
-
+    
             // update processing progress with id and metadata payload
-            await Globals.StoreProcessingStateRecordInCosmosAsync(state);
+            await Globals.StoreProcessingStateRecordInCosmosAsync(manifest);
 
             Globals.LogMessage(log, $"AMS encoding job submitted for {videofileName}");
         }
