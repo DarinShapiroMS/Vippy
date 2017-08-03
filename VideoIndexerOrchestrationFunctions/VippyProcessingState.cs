@@ -10,6 +10,8 @@ namespace OrchestrationFunctions
        
         public string AlternateId { get; set; }
 
+        public string ProcessingState { get; set; }
+    
         public string DocumentType => "state";
 
         public string AmsAssetId { get; set; }
@@ -30,6 +32,11 @@ namespace OrchestrationFunctions
 
         public string[] Transcripts { get; set; }
 
+        public List<ProcessingMessage> ProcessingMessage { get; set; }
+    
+        public int StepNumber { get; set; }
+
+        public int StepCount { get; set; }
         /// <summary>
         /// This holds the optional client values passed in via the json manifest
         /// </summary>
@@ -41,4 +48,14 @@ namespace OrchestrationFunctions
         }
     }
 
+    public class ProcessingMessage
+    {
+        public string Message { get; set; }
+
+        public string LogLevel { get; set; }
+
+        public DateTime TimeStamp { get; set; }
+    }
+    
+    
 }
